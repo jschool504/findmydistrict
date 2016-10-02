@@ -1,0 +1,83 @@
+<% include partials/header %>
+		<p id="mapIntro">You are in...</p>
+		<div class="layout_div" id="resultDiv">
+			<h2><%= state %>'s <%= englishDistrict %> District</h2>
+			<div id="mapDiv">
+				<div id="imgDiv">
+					<img src="/images/<%= stateName %>/<%= district %>.svg"/>
+				</div>
+				<div id="repDiv">
+				<% if (representative != null) { %>
+					<h3><b><%= representative.first_name %> <%= representative.middle_name %> <%= representative.last_name %></b> <span><% if (representative.party == "D") { %>Democrat<% } else { %>Republican<% } %></span></h3>
+					<p><img width="16px" src="/images/compass-1-64x64.png"/> <a href="<%= representative.website %>"><%= representative.website.split('//')[1] %></a></p>
+					<p><img width="16px" src="/images/mail-3-64x64.png"/> <% if (representative.t_contact_form == null) { %>None<% } else { %><a href="<%= representative.contact_form %>"><%= representative.t_contact_form.split('//')[1] %><% } %></a></p>
+					<p><img width="16px" src="/images/facebook1-64x64.png"/> <a href="https://www.facebook.com/<%= representative.facebook_id %>">facebook.com/<%= representative.facebook_id %></a></p>
+					<p><img width="16px" src="/images/twitter-64x64.png"/> <a href="https://www.twitter.com/<%= representative.twitter_id %>">twitter.com/<%= representative.twitter_id %></a></p>
+					<p><img width="16px" src="/images/phone-1-64x64.png"/> <%= representative.phone %></p>
+					<p><img width="16px" src="/images/building-3-64x64.png"/> <a href="https://www.google.com/maps/search/<%= representative.office %>, DC"><%= representative.office %>, D.C.</a></p>
+				<% } else { %>
+					<p>Sorry, couldn't find any representative data for this district.</p>
+				<% } %>
+				</div>
+			</div>
+			<div id="districtDiv" style="height:600px;">
+				<h3>Demographics</h3>
+				<div>
+					<div class="info_div">
+						<p><span>Population</span></p>
+						<div>
+							<p><%= data.white_percent %>% <span>White</span></p>
+							<p><%= data.black_percent %>% <span>Black/African American</span></p>
+							<p><%= data.asian_percent %>% <span>Asian</span></p>
+							<p><%= data.am_percent %>% <span>Native American/Alaskan</span></p>
+							<p><%= data.haw_percent %>% <span>Native Hawaiian/Pacific Islander</span></p>
+							<p><%= data.other_percent %>% <span>Other (1 or more races)</span></p>
+							<p><%= data.total_pop %> <span><b>Total Population</b></span></p>
+						</div>
+					</div>
+					<div class="info_div">
+						<p style="height: 20px;"></p>
+						<div>
+							<p><%= data.age_under_18 %>% <span>Under 18 years</span></p>
+							<p><%= data.age_1834 %>% <span>18 to 34 years</span></p>
+							<p><%= data.age_3564 %>% <span>35 to 64 years</span></p>
+							<p><%= data.age_over_65 %>% <span>65+ years</span></p>
+						</div>
+					</div>
+					<div class="info_div" style="margin-right: 0;">
+						<p><span>Earnings</span></p>
+						<div>
+							<p>$<%= data.white_earnings %> <span>White</span></p>
+							<p>$<%= data.black_earnings %> <span>Black/African American</span></p>
+							<p>$<%= data.asian_earnings %> <span>Asian</span></p>
+							<p>$<%= data.am_earnings %> <span>Native American/Alaskan</span></p>
+							<p>$<%= data.haw_earnings %> <span>Native Hawaiian/Pacific Islander</span></p>
+							<p>$<%= data.other_earnings %> <span>Other (1 or more races)</span></p>
+							<p>$<%= data.avg_earnings %> <span><b>Average Income</b></span></p>
+						</div>
+					</div>
+				</div>
+				<div>
+					<div class="info_div">
+						<p><span>Education & Employment</span></p>
+						<div>
+							<p><%= data.assoc_edu %>% <span>Associate's Degree/Some College</span></p>
+							<p><%= data.bach_edu %>% <span>Bachelor's Degree</span></p>
+							<p><%= data.grad_edu %>% <span>Graduate/Professional Degree</span></p>
+							<p><%= data.unemployed_rate %>% <span>Unemployment Rate</span></p>
+							<p><%= data.higher_edu %>% <span><b>Any Higher Education</b></span></p>
+						</div>
+					</div>
+					<div class="info_div">
+						<p><span>2014 Election Breakdown</span></p>
+						<div>
+							<% for (var i = 0; i < election_data.length - 1; i++) { %>
+								<p><%= (election_data[i].general_votes / election_data[election_data.length - 1].general_votes * 100).toFixed(1) %>% <span><%= election_data[i].party %></span></p>
+							<% } %>
+							<p><%= (election_data[election_data.length - 1].general_votes / election_data.pop * 100).toFixed(1) %>% <span><b>Voter Turnout</b></span></p>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+<% include partials/footer %>
