@@ -40,8 +40,8 @@ a:hover {
 }
 
 #contentDiv {
+	width: 100%;
 	margin-top: 20px;
-	width: auto;
 }
 
 #searchDiv {
@@ -184,7 +184,6 @@ a:hover {
 @media (min-width: 768px) {
 	#contentDiv {
 		float: left;
-		margin-right: 20px;
 	}
 	
 	#sideBannerAdDiv {
