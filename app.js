@@ -199,6 +199,11 @@ app.get("/atlarge", function(request, response) {
 	response.render("article", {content: marked(fs.readFileSync("public/articles/atlarge.md").toString()), title: "At Large"});
 });
 
+app.get("/sitemap.xml", function(request, response) {
+	var map = fs.readFileSync("sitemap.xml").toString();
+	response.send(map);
+});
+
 app.listen(80, function() {
 	console.log("Listening on port 80...");
 });
