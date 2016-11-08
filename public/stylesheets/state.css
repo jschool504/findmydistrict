@@ -1,0 +1,13 @@
+path {
+	fill: #ddd;
+	font-family:'MS Shell Dlg 2';
+	font-size:34.375px;
+	font-weight:400;
+	stroke-linecap:square;
+	stroke-linejoin:bevel;
+	stroke-width:0.2;
+	stroke:#fff;
+	transform-origin: 50% 50%;
+	transition: 0.2s;
+	z-index: 0;
+}

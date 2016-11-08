@@ -1,5 +1,5 @@
 a {
-	color: #5F5F5F;
+	color: #5f5f5f;
 	text-decoration: underline;
 }
 
@@ -8,77 +8,76 @@ a:hover {
 }
 
 #navbar {
-	background-color: #A8D7E6;
-	border-radius: 5px;
-	padding-top: 5px;
-	padding-left: 5px;
-	height: 30px;
+	padding: 10px 10px 10px;
+	text-align: center;
 }
 
-#navbar > a {
-	font-weight: bold;
-	color: #254E5B;
-	text-decoration: none;
-	border-radius: 2px;
-	padding: 2px;
+#navbar > form {
+	display: inline-block;
 }
 
-#navbar > a:hover {
-	color: black;
-	transition: 0.2s;
+#navbar > form > input {
+	color: #b33333;
+	background-color: white;
+	padding: 5px 10px;
+	border: none;
 }
 
-#navbar > p {
-	font-weight: bold;
-	color: #254E5B;
+#navbar > form > input:hover {
+	color: white;
+	background-color: #b33333;
+	transition: 0.1s;
 }
 
 #bodyDiv {
-	width: 768px;
+	margin-top: 20px;
+	width: 900px;
 	margin-left: auto;
 	margin-right: auto;
 }
 
 #contentDiv {
-	width: 100%;
-	margin-top: 20px;
+	overflow: auto;
 }
 
 #searchDiv {
 	margin-top: 10px;
 }
 
-#sideBannerAdDiv {
-	margin-top: 20px;
-	width: 175px;
-	height: 615px;
-}
-
-#searchBarAdDiv {
-	margin-top: 12px;
-	margin-left: auto;
-	margin-right: auto;
-	width: 320px;
-	display: none;
+#header {
+	border: 2px solid #ad0000;
 }
 
 #mainHeader {
+	margin-bottom: 0;
 	text-align: center;
 	margin-top: 0;
-	background-color: #670000;
 	padding-top: 15px;
 	padding-bottom: 15px;
-	border-radius: 7px;
+	width: 100%;
+	border-bottom: 1px solid #ad0000;
 }
 
 #mainHeader > a {
-	color: white;
+	color: #ad0000;
+	font-face: "Impact";
 	font-weight: bold;
 	text-decoration: none;
 }
 
 #searchButton {
 	float: right;
+	height: 34px;
+	border: 1px solid black;
+	background-color: white;
+}
+
+#searchButton {
+	background-color: #EDEDED;
+}
+
+#searchButton:hover {
+	background-color: lightgrey;
 }
 
 #addressDiv {
@@ -88,6 +87,9 @@ a:hover {
 
 #addressDiv > input {
 	width: 100%;
+	height: 34px;
+	border: 1px solid #000ea3;
+	padding-left: 5px;
 }
 
 #mapIntro {
@@ -95,7 +97,9 @@ a:hover {
 	text-align: center;
 	font-size: 16px;
 	color: grey;
-	margin-top: 16px;
+	margin-top: 10px;
+	border-top: 1px solid grey;
+	padding-top: 10px;
 }
 
 #resultDiv > h2 {
@@ -104,26 +108,30 @@ a:hover {
 }
 
 #mapDiv {
-	height: 300px;
 	margin-bottom: 10px;
+	height: 300px;
 }
 
 #imgDiv {
-	float: left;
+	height: 300px;
+	max-width: 430px;
 	margin-right: 20px;
+	float: left;
 }
 
-#imgDiv > img {
-	width: 350px;
+#imgDiv > object {
+	width: 430px;
 	height: 300px;
-	border: 2px solid #666666;
-	border-radius: 3px;
+}
+
+#repContainerDiv {
+	height: 230px;
+	width: 450px;
+	display: inline-block;
+	padding: 10px;
 }
 
 #repDiv {
-	width: 335px;
-	height: 230px;
-	display: inline-block;
 }
 
 #repDiv > h3, #districtDiv > h3 {
@@ -143,20 +151,14 @@ a:hover {
 
 #districtDiv {
 	margin-top: 17px;
-	height: 280px;
 }
 
 #districtDiv > h3 {
 	text-align: center;
 }
 
-#districtDiv > div {
-	height: 280px;
-}
-
 .info_div {
 	float: left;
-	margin-right: 20px;
 	width: 221px;
 }
 
@@ -174,49 +176,154 @@ a:hover {
 }
 
 #footerDiv {
+	border-top: 2px solid #ad0000;
+	padding: 5px;
+	margin-top: 20px;
+	height: 300px;
+}
+
+.spacer {
+	height: 20px;
+}
+
+#statsDiv > div > div > h4 {
+	text-align: center;
+	font-weight: bold;
+}
+
+#statsLeft {
+	float: left;
+}
+
+#statsRight {
+	float: right;
+}
+
+.stats_col {	
+	width: 440px;
+}
+
+.stats {
+	width: 100%;
+	display: inline-block;
+	float: left;
+	padding: 10px;
+	background-color: #efefef;
+	border: 1px solid #666;
+	margin-bottom: 20px;
+}
+.stats:hover {
+	border: 1px solid #000;
+	background-color: #dfdfdf;
+	transition: 0.2s;
+}
+
+.stats > div > div {
+	margin-bottom: 5px;
+}
+
+.color_box {
+	width: 20px;
+	height: 20px;
+	margin-right: 5px;
+	display: inline-block;
+	border: 1px solid black;
+	float: left;
+}
+
+.district_data {
+	margin-left: auto;
+	margin-right: auto;
+}
+
+#demoLabel {
+	border-bottom: 2px solid #000;
+	padding-bottom: 15px;
+	margin-bottom: 15px;
+}
+
+.datum {
+	font-weight: bold;
+}
+
+.party {
+	text-decoration: underline;
+}
+
+.donate_text {
+	float: left;
+	height: 31px;
+	font-size: 13pt;
+}
+
+.donate_button {
+	display: inline-block;
+	margin-left: 10px;
+}
+
+#adDiv {
 	margin-top: 10px;
+	width: 728px;
+	height: 90px;
+	margin-right: auto;
+	margin-left: auto;
+	display: none;
 }
 
-#footerDiv > a {
-	/*float: right;*/
+#welcomeDiv {
+	margin-top: 10px;
+	text-align: center;
 }
 
-@media (min-width: 768px) {
+#usMap {
+	width: 900px;
+}
+
+.state_div {
+	max-width: 482px;
+	margin-bottom: 5px;
+	margin-right: 5px;
+	padding-left: 5px;
+	border: 1px solid #bf0000;
+	background-color: #ffeeee;
+	border-radius: 2px;
+	display: inline-block;
+}
+
+.state_div > h4 {
+	text-align: center;
+}
+
+.state_div:hover {
+	border-color: #220000;
+}
+
+#unopposed > p {
+	font-size: 14pt;
+	text-align: center;
+}
+
+@media (max-width: 900px) {
+	
 	#contentDiv {
-		float: left;
-	}
-	
-	#sideBannerAdDiv {
-		overflow: auto;
-	}
-	
-	#searchBarAdDiv {
-		display: none;
-	}
-}
-
-@media (max-width: 768px) {
-	
-	#contentDiv {
+		margin-top: 0;
 		width: auto;
+		overflow: auto;
+		margin: 0 8px;
+	}
+	
+	#header {
+		border-top: none;
+		border-left: none;
+		border-right: none;
 	}
 	
 	#bodyDiv {
-		margin-left: 20px;
-		margin-right: 20px;
-		margin-top: 12px;
+		margin-top: 0;
 		width: auto;
 	}
 	
-	#searchBarAdDiv {
-		display: block;
-	}
-	
-	#sideBannerAdDiv {
-		display: none;
-	}
-	
-	#repDiv {
+	#repContainerDiv {
 		width: 100%;
 		height: auto;
 	}
@@ -247,8 +354,47 @@ a:hover {
 		width: 100%;
 	}
 	
-	.info_div {
+	#statsDiv {
+		height: auto;
+	}
+	
+	#statsLeft {
 		width: 100%;
-		margin-bottom: 20px;
+	}
+	
+	#statsRight {
+		width: 100%;
+	}
+	
+	.stats {
+		width: 100%;
+	}
+	
+	.donate_text {
+		display: block;
+		height: auto;
+		float: none;
+		text-align: center;
+	}
+
+	.donate_button {
+		display: block;
+		margin-left: auto;
+		margin-right: auto;
+		margin-top: 5px;
+		width: 92px;
+	}
+}
+
+
+@media (max-width: 728px) {
+	#adDiv {
+		display: none;
+	}
+}
+
+@media (max-width: 900px) {
+	#usMap {
+		display: none;
 	}
 }

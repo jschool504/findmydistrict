@@ -65,18 +65,6 @@ AK,Alaska,H,n/a,,,Total State Votes:,,168171,279741
 AK,Alaska,,n/a,,,,,,
 AK,Alaska,,n/a,,,,,,
 ,,,n/a,,,,,,
-AS,American Samoa,0,H4AS00036,Aumua,Amata,,R,,4306
-AS,American Samoa,0,H0AS00018,Eni F. H.,Faleomavaega,,D,,3157
-AS,American Samoa,0,H4AS00085,Togiola,Tulafono,,D,,1130
-AS,American Samoa,0,H4AS00069,Mapu S.,Jamias,,D,,652
-AS,American Samoa,0,H8AS00052,'Rosie Fuala''au Tago',Lancaster,,IND,,268
-AS,American Samoa,0,H4AS00093,Meleagi,Suitonu-Chapman,,D,,229
-AS,American Samoa,0,H2AS00030,Tuika,Tuika,,IND,,201
-AS,American Samoa,0,H2AS00055,'Tuā''au Kereti, Jr.','Māta''utia',,D,,160
-AS,American Samoa,0,H4AS00077,Mark,Ude,,IND,,143
-AS,American Samoa,,n/a,,,District Votes:,,,10246
-AS,American Samoa,H,n/a,,,Total State Votes:,,,10246
-,,,n/a,,,,,,
 AZ,Arizona,1,H8AZ01104 ,Ann,Kirkpatrick,,D,51393,97391
 AZ,Arizona,1,n/a,,,Party Votes:,D,51393,
 AZ,Arizona,1,H0AZ01325 ,Andy,Tobin,,R,18814,87723
@@ -556,7 +544,7 @@ DE,Delaware,0,H2DE00148,Scott,Gesty,,LIB,*,4419
 DE,Delaware,0,n/a,,,District Votes:,,,231617
 DE,Delaware,H,n/a,,,Total State Votes:,,,231617
 DE,Delaware,,n/a,,,,,,
-,,,n/a,,,,,,
+,,,,,,,,,
 DC,District of Columbia,0,H0DC00058 ,Eleanor H.,Norton,,D,87247,143923
 DC,District of Columbia,0,n/a,,Scattered,,W(D),2652,
 DC,District of Columbia,0,n/a,,,Party Votes:,D,89899,
@@ -574,7 +562,7 @@ DC,District of Columbia,0,n/a,,Scattered,,W(LIB),1,
 DC,District of Columbia,0,n/a,,,Party Votes:,LIB,31,
 DC,District of Columbia,0,n/a,,,District Votes:,,91595,171893
 DC,District of Columbia,H,n/a,,,Total State Votes:,,91595,171893
-,,,n/a,,,,,,
+,,,,,,,,,
 FL,Florida,1,H2FL01100 ,Jeff,Miller,,R,44784,165086
 FL,Florida,1,H0FL00023 ,John E.,Krause,,R,14660,
 FL,Florida,1,n/a,,,Party Votes:,R,59444,
@@ -824,17 +812,6 @@ GA,Georgia,14,n/a,,,District Votes:,,43667,118782
 GA,Georgia,,n/a,,,,,,
 GA,Georgia,H,n/a,,,Total State Votes:,,762498,2305665
 GA,Georgia,,n/a,,,,,,
-,,,n/a,,,,,,
-GU,Guam,0,H2GU00033,Madeleine Z.,Bordallo,,D,5898,20693
-GU,Guam,0,H4GU00013,Matthew P.,Artero,,D,2016,
-GU,Guam,0,n/a,,Scattered,,W(D),24,
-GU,Guam,0,n/a,,,Party Votes:,D,7938,
-GU,Guam,0,H4GU00021,Margaret G.,Metcalfe,,R,6753,14956
-GU,Guam,0,n/a,,Scattered,,W(R),120,
-GU,Guam,0,n/a,,,Party Votes:,R,6873,
-GU,Guam,0,n/a,,Scattered,,W,,113
-GU,Guam,0,n/a,,,District Votes:,,14811,35762
-GU,Guam,H,n/a,,,Total State Votes:,,14811,35762
 ,,,n/a,,,,,,
 HI,Hawaii,1,H4HI01134,Mark,Takai,,D,52736,93390
 HI,Hawaii,1,H4HI01167,Donna Mercado,Kim,,D,33678,
@@ -2427,11 +2404,6 @@ ND,North Dakota,0,n/a,,,Party Votes:,LIB,1555,
 ND,North Dakota,0,n/a,,Scattered,,W,,361
 ND,North Dakota,0,n/a,,,District Votes:,,82048,248670
 ND,North Dakota,H,n/a,,,Total State Votes:,,82048,248670
-,,,n/a,,,,,,
-MP,Northern Mariana Islands,0,H8MP00041,Gregorio Kilili Camacho,Sablan,,IND,,8549
-MP,Northern Mariana Islands,0,H4MP00016,Andrew Sablan,Salas,,D,,4547
-MP,Northern Mariana Islands,0,n/a,,,District Votes:,,,13096
-MP,Northern Mariana Islands,H,n/a,,,Total State Votes:,,,13096
 ,,,n/a,,,,,,
 OH,Ohio,1,H8OH01043,Steve,Chabot,,R,31953,124779
 OH,Ohio,1,n/a,,,Party Votes:,R,31953,

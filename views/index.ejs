@@ -1,0 +1,14 @@
+<% include partials/header %>
+	<div style="padding-top: 10px;">
+		<% for (i in districts) { %>
+			<div style="margin-bottom: 10px; height: 100px;">
+				<div><img style="float: left; margin-right: 10px; border: 1px solid black; max-width: 100px;" height="100px" src="/images/<%= districts[i].state %>/<%= districts[i].district %>.svg"/></div>
+				<div>
+					<p style="font-size: 16pt;"><a style="text-decoration: none; color: black;" href="/search/<%= districts[i].state_name %>/<%= districts[i].district %>>"><%= districts[i].state_name %>'s <%= districtEnding(districts[i].district) %> District</a></p>
+					<p style="font-size: 14pt; color: gray;">Representative: <%=  %></p>
+				</div>
+			</div>
+			<hr/>
+		<% } %>
+	</div>
+<% include partials/footer %>

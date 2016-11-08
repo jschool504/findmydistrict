@@ -9,6 +9,7 @@ var states = {
 	CO: "Colorado-8",
 	CT: "Connecticut-9",
 	DE: "Delaware-10",
+	DC: "District of Columbia-11",
 	FL: "Florida-12",
 	GA: "Georgia-13",
 	HI: "Hawaii-15",
@@ -139,7 +140,13 @@ helpers.expandPartyName = function(partyLetters) {
 }
 
 helpers.censusStateNumber = function(stateLetters) {
-	return states[stateLetters].split("-")[1];
+	var ret_val = -1;
+	
+	if (states[stateLetters] != null) {
+		ret_val = states[stateLetters].split("-")[1];
+	}
+	
+	return ret_val;
 }
 
 helpers.commify = function(num) {
@@ -182,5 +189,13 @@ helpers.districtEnding = function(districtNum) {
 	
 	return districtWithEnding;
 }
+
+helpers.escapeSQLString = function(string) {
+	var fixed_string = string.split("'").join("''");
+	fixed_string = fixed_string.split("\\").join("\\\\");
+	//console.log("PRE FIX: " + string);
+	//console.log("POST FIX: " + fixed_string);
+	return fixed_string;
+};
 
 module.exports = helpers;
