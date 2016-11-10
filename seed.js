@@ -3,7 +3,9 @@ var helpers = require("./helpers");
 var fs		= require("fs");
 var req = require("request");
 
-function loadDB() {
+var sunKey = "&apikey=9967b44401de43e58a30a6d8ab3fe1c5";
+
+function loadFECDB() {
 	var rows = fs.readFileSync("fecelections_1.csv").toString().split("\n");
 	rows.splice(0, 1); // remove header
 	rows.splice(rows.length - 1, 1);
@@ -22,7 +24,8 @@ function loadDB() {
 }
 
 function seedDB(connection) {
-	var data = loadDB();
+	var data = loadFECDB();
+	
 	connection.query("SHOW TABLES LIKE 'house_election_2014'", function(error, rows, fields) {
 		if (rows[0] != null) {
 			connection.query("DROP TABLE house_election_2014");

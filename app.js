@@ -107,8 +107,17 @@ app.get("/search", function(request, response){
 				var lng = resBody.results[0].geometry.location.lng;
 				
 				req("https://congress.api.sunlightfoundation.com/districts/locate?latitude=" + lat + "&longitude=" + lng + "&apikey=9967b44401de43e58a30a6d8ab3fe1c5", function(s_api_error, s_api_response, s_api_body) {
-					if (s_api_error == null) {
-						var answer = JSON.parse(s_api_response.body);
+					if (s_api_response.statusCode == 200) {
+						var answer = {
+							count: 0
+						};
+						
+						try {
+							answer = JSON.parse(s_api_response.body);
+						} catch (e) {
+							console.log(answer);
+						}
+						
 						if (answer.count == 0) { // Check if the coordinates have a representative associated with them
 							response.render("unknown", {title: "Location Not Found"});
 						} else {
@@ -116,7 +125,12 @@ app.get("/search", function(request, response){
 							var districtVar = answer.results[0].district;
 					
 							req("https://congress.api.sunlightfoundation.com/legislators?district=" + answer.results[0].district + "&state=" + stateVar + "&apikey=9967b44401de43e58a30a6d8ab3fe1c5", function(l_api_error, l_api_response, l_api_body) {
-								var legInfo = JSON.parse(l_api_body);
+								try {
+									var legInfo = JSON.parse(l_api_body);
+								} catch (e) {
+									console.log(e);
+								}
+								
 								if (legInfo.count == 0) {
 									response.render("unknown", {title: "Location Not Found"});
 								} else if (legInfo.count > 0) {
@@ -224,94 +238,102 @@ app.get("/district", function(request, response) {
 	var districtVar = info[1];
 
 	req("https://congress.api.sunlightfoundation.com/legislators?district=" + districtVar + "&state=" + stateVar + "&apikey=9967b44401de43e58a30a6d8ab3fe1c5", function(l_api_error, l_api_response, l_api_body) {
-		var legInfo = JSON.parse(l_api_body).results[0];
+		if (l_api_response.statsuCode == 200) {
 		
-		if (legInfo == null) {
-			legInfo = "Vacant";
-		}
-		console.log(legInfo);
-		var districtQuery = "&for=congressional+district:" + districtVar + "&in";
-		if (stateVar == "DC") {
-			districtQuery = "&for";
-		}
-		
-		var censusQuery = "http://api.census.gov/data/2015/acs1?get=" + reqFields.join(",") + districtQuery +"=state:" + helpers.censusStateNumber(stateVar) + "&key=8b984e052c12d4e2e2322af26f46f3a7674aec46";
-		console.log(censusQuery);
-		req(censusQuery, function(i_api_error, i_api_response, i_api_body) {
-			if (i_api_error == null) {
-				var err;
-				try {
-					var acs = JSON.parse(i_api_response.body);
-				} catch (e) {
-					err = e;
-					console.log(i_api_response.body);
-					console.log("Error with response from Census...");
-				}
-				
-				if (err == null) {
-					acs[1][6] = parseInt((parseInt(acs[1][6]) + parseInt(acs[1][7]))/2);
-			
-					for (var i in acs[1]) {
-						if (acs[1][i] == null) {
-							acs[1][i] = "-";
-						} else {
-							acs[1][i] = parseInt(acs[1][i]);
-						}
-					}
-			
-					var data =	{
-									avg_earnings: helpers.commify(acs[1][0].toString()),
-									white_earnings: acs[1][1],
-									black_earnings: acs[1][2],
-									asian_earnings: acs[1][3],
-									am_earnings: acs[1][4],
-									haw_earnings: acs[1][5],
-									other_earnings: parseInt((acs[1][6] + acs[1][7]) / 2),
-									total_workforce: acs[1][8],
-									unemployed_rate: acs[1][9],
-									age_under_18: acs[1][10],
-									assoc_edu: (acs[1][11] / acs[1][14] * 100).toFixed(1),
-									bach_edu: (acs[1][12] / acs[1][14] * 100).toFixed(1),
-									grad_edu: (acs[1][13] / acs[1][14] * 100).toFixed(1),
-									non_higher_edu: (((acs[1][14] - (acs[1][11] + acs[1][12] + acs[1][13])) / acs[1][14]) * 100).toFixed(1),
-									total_pop: acs[1][14],
-									white_percent: (acs[1][15] / acs[1][14] * 100).toFixed(1),
-									black_percent: (acs[1][16] / acs[1][14] * 100).toFixed(1),
-									am_percent: (acs[1][17] / acs[1][14] * 100).toFixed(1),
-									asian_percent: (acs[1][18] / acs[1][14] * 100).toFixed(1),
-									haw_percent: (acs[1][19] / acs[1][14] * 100).toFixed(1),
-									other_percent: ((acs[1][20] + acs[1][21]) / acs[1][14] * 100).toFixed(1)
-								};
-			
-					fs.appendFile("../searches.log", Date.now() + "," + request.query.q + "\n");
-					
-					var thing = "SELECT candidate_name_first,candidate_name_last,party,general_votes FROM house_election_2014 WHERE state LIKE '" + stateVar + "' AND district LIKE " + districtVar + " AND general_votes NOT LIKE -1";
-					
-					connection.query(thing, function(err, election_data) {
-						try {
-							election_data.pop = acs[1][14] - acs[1][10];
-							election_data.voted = election_data[election_data.length - 1].general_votes;
-						} catch (e) {
-							console.log(e);
-							console.log(election_data);
-						}
-						
-						response.render("district", {
-							state: helpers.expandStateName(stateVar),
-							stateName: stateVar,
-							district: districtVar,
-							englishDistrict: helpers.districtEnding(districtVar),
-							representative: legInfo,
-							data: data,
-							election_data: election_data,
-							title: (stateVar + " " + districtVar)
-						});
-					});
-				} else {
-					response.send("There was an error contacting the Census API. Please report this to contactfindmydistrict@gmail.com");
-				}
+			try {
+				var legInfo = JSON.parse(l_api_body).results[0];
+			} catch (e) {
+				console.log(legInfo);
 			}
-		});
+			if (legInfo == null) {
+				legInfo = "Vacant";
+			}
+		
+			var districtQuery = "&for=congressional+district:" + districtVar + "&in";
+			if (stateVar == "DC") {
+				districtQuery = "&for";
+			}
+		
+			var censusQuery = "http://api.census.gov/data/2015/acs1?get=" + reqFields.join(",") + districtQuery +"=state:" + helpers.censusStateNumber(stateVar) + "&key=8b984e052c12d4e2e2322af26f46f3a7674aec46";
+			console.log(censusQuery);
+			req(censusQuery, function(i_api_error, i_api_response, i_api_body) {
+				if (i_api_response == 200) {
+					var err;
+					try {
+						var acs = JSON.parse(i_api_response.body);
+					} catch (e) {
+						err = e;
+						console.log(i_api_response.body);
+						console.log("Error with response from Census...");
+					}
+				
+					if (err == null) {
+						acs[1][6] = parseInt((parseInt(acs[1][6]) + parseInt(acs[1][7]))/2);
+			
+						for (var i in acs[1]) {
+							if (acs[1][i] == null) {
+								acs[1][i] = "-";
+							} else {
+								acs[1][i] = parseInt(acs[1][i]);
+							}
+						}
+			
+						var data =	{
+										avg_earnings: helpers.commify(acs[1][0].toString()),
+										white_earnings: acs[1][1],
+										black_earnings: acs[1][2],
+										asian_earnings: acs[1][3],
+										am_earnings: acs[1][4],
+										haw_earnings: acs[1][5],
+										other_earnings: parseInt((acs[1][6] + acs[1][7]) / 2),
+										total_workforce: acs[1][8],
+										unemployed_rate: acs[1][9],
+										age_under_18: acs[1][10],
+										assoc_edu: (acs[1][11] / acs[1][14] * 100).toFixed(1),
+										bach_edu: (acs[1][12] / acs[1][14] * 100).toFixed(1),
+										grad_edu: (acs[1][13] / acs[1][14] * 100).toFixed(1),
+										non_higher_edu: (((acs[1][14] - (acs[1][11] + acs[1][12] + acs[1][13])) / acs[1][14]) * 100).toFixed(1),
+										total_pop: acs[1][14],
+										white_percent: (acs[1][15] / acs[1][14] * 100).toFixed(1),
+										black_percent: (acs[1][16] / acs[1][14] * 100).toFixed(1),
+										am_percent: (acs[1][17] / acs[1][14] * 100).toFixed(1),
+										asian_percent: (acs[1][18] / acs[1][14] * 100).toFixed(1),
+										haw_percent: (acs[1][19] / acs[1][14] * 100).toFixed(1),
+										other_percent: ((acs[1][20] + acs[1][21]) / acs[1][14] * 100).toFixed(1)
+									};
+			
+						fs.appendFile("../searches.log", Date.now() + "," + request.query.q + "\n");
+					
+						var thing = "SELECT candidate_name_first,candidate_name_last,party,general_votes FROM house_election_2014 WHERE state LIKE '" + stateVar + "' AND district LIKE " + districtVar + " AND general_votes NOT LIKE -1";
+					
+						connection.query(thing, function(err, election_data) {
+							try {
+								election_data.pop = acs[1][14] - acs[1][10];
+								election_data.voted = election_data[election_data.length - 1].general_votes;
+							} catch (e) {
+								console.log(e);
+								console.log(election_data);
+							}
+						
+							response.render("district", {
+								state: helpers.expandStateName(stateVar),
+								stateName: stateVar,
+								district: districtVar,
+								englishDistrict: helpers.districtEnding(districtVar),
+								representative: legInfo,
+								data: data,
+								election_data: election_data,
+								title: (stateVar + " " + districtVar)
+							});
+						});
+					} else {
+						response.send("There was an error contacting the Census API. Please report this to contactfindmydistrict@gmail.com");
+					}
+				}
+			});
+		} else {
+			response.send("There was an error contacting the Sunlight Foundation Legislators API. Please report this to contactfindmydistrict@gmail.com");
+		}
 	});
 });
 
