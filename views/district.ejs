@@ -10,7 +10,7 @@
 						<div id="repContainerDiv">
 							<div id="repDiv">
 							<% if (representative != "Vacant") { %>
-								<h3><b><%= representative.first_name %> <%= representative.middle_name %> <%= representative.last_name %></b> <span id="party"><% if (representative.party == "D") { %>Democrat<% } else { %>Republican<% } %></span></h3>
+								<h3><b><%= representative.first_name %> <%= representative.middle_name %> <%= representative.last_name %></b> <span id="party"><%= representative.party %></span></h3>
 								<p><img width="16px" src="/images/compass-1-64x64.png"/> <% if (representative.website == null) { %>None<% } else { %><a href="<%= representative.website %>"><%= representative.website.split('//')[1] %><% } %></a></p>
 								<p><img width="16px" src="/images/mail-3-64x64.png"/> <% if (representative.contact_form == null) { %>None<% } else { %><a href="<%= representative.contact_form %>"><%= representative.contact_form.split('//')[1] %><% } %></a></p>
 								<p><img width="16px" src="/images/facebook1-64x64.png"/> <a href="https://www.facebook.com/<%= representative.facebook_id %>">facebook.com/<%= representative.facebook_id %></a></p>
