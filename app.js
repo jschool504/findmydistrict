@@ -54,7 +54,7 @@ var reqFields = [
 	"B02001_008E"	// 21. other (2+) pop
 ];
 
-var renderDistrict = function(d, request, response) {
+function renderDistrict(d, request, response) {
 
 	// DC has to be treated slightly differently. 
 	var districtQuery = "&for=congressional+district:" + d[1] + "&in";
@@ -63,7 +63,7 @@ var renderDistrict = function(d, request, response) {
 	}
 	
 	connection.query("SELECT first_name,last_name,party,website,facebook_id,twitter_id,office,phone FROM congress114 WHERE type LIKE 'rep' AND state LIKE '" + d[0] + "' AND district LIKE '" + d[1] + "'", function(err, rep_rows) {
-		var censusQuery = "http://api.census.gov/data/2015/acs1?get=" + reqFields.join(",") + districtQuery +"=state:" + helpers.censusStateNumber(d[0]) + "&key=8b984e052c12d4e2e2322af26f46f3a7674aec46";
+		var censusQuery = "http://api.census.gov/data/2015/acs1?get=" + reqFields.join(",") + districtQuery +"=state:" + d[2] + "&key=8b984e052c12d4e2e2322af26f46f3a7674aec46";
 		console.log(censusQuery);
 		
 		req(censusQuery, function(i_api_error, i_api_response, i_api_body) {
@@ -112,12 +112,10 @@ var renderDistrict = function(d, request, response) {
 									other_percent: ((acs[1][20] + acs[1][21]) / acs[1][14] * 100).toFixed(1)
 								};
 		
-					//fs.appendFile("../searches.log", Date.now() + "," + request.query.address + "," + lat + "," + lng + "\n");
-				
 					var thing = "SELECT candidate_name_first,candidate_name_last,party,general_votes FROM house_election_2014 WHERE state LIKE '" + d[0] + "' AND district LIKE " + d[1] + " AND general_votes NOT LIKE -1";
 				
 					connection.query(thing, function(err, election_data) {
-						console.log(thing);
+						console.log(err);
 						election_data.pop = acs[1][14] - acs[1][10];
 						election_data.voted = election_data[election_data.length - 1].general_votes;
 						console.log(rep_rows);
@@ -195,15 +193,11 @@ app.get("/search", function(request, response){
 				};
 				
 				connection.query("SELECT * FROM tl_2015_us_cd114 WHERE ST_CONTAINS(tl_2015_us_cd114.SHAPE, Point(" + coords.lng + ", " + coords.lat + "))", function(err, rows) {
-					console.log(err);
 					console.log(rows);
-					/*var t = rows[0]["ASTEXT(shape)"].split("((")[1].split("))")[0];
-					console.log(t.split(","));*/
-					//fs.writeFile("shape.wkt", );
+					if (rows[0] !== null) {
+						renderDistrict([helpers.stateAB(rows[0].statefp), parseInt(rows[0].cd114fp), parseInt(rows[0].statefp)], request, response);
+					}
 				});
-				
-				console.log(coords);
-				response.redirect("/");
 			}
 		} else {
 			response.send("There was an error contacting the Google Maps API. Please report this to contactfindmydistrict@gmail.com");
@@ -213,6 +207,7 @@ app.get("/search", function(request, response){
 
 app.get("/district", function(request, response) {
 	var district = request.query.q.split("-");
+	district.push(helpers.censusStateNumber(district[0]));
 	console.log(district);
 	
 	renderDistrict(district, request, response);
