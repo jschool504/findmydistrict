@@ -1,2 +1,2 @@
 #!/bin/sh
-rsync -r . root@findmydistrict.com:~/districteer
+rsync -r -v . root@findmydistrict.com:~/districteer

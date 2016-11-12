@@ -193,9 +193,10 @@ app.get("/search", function(request, response){
 				};
 				
 				connection.query("SELECT * FROM tl_2015_us_cd114 WHERE ST_CONTAINS(tl_2015_us_cd114.SHAPE, Point(" + coords.lng + ", " + coords.lat + "))", function(err, rows) {
-					console.log(rows);
-					if (rows[0] !== null) {
+					if (rows[0] !== undefined) {
 						renderDistrict([helpers.stateAB(rows[0].statefp), parseInt(rows[0].cd114fp), parseInt(rows[0].statefp)], request, response);
+					} else {
+						response.render("unknown", {title: "Place Not Found"});
 					}
 				});
 			}
