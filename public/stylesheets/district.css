@@ -1,0 +1,5 @@
+@media (max-width: 728px) {
+	#imgDiv > object {
+		width: 100%;
+	}
+}

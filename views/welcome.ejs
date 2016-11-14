@@ -1,7 +1,11 @@
 <% include partials/header %>
 <div id="welcomeDiv">
 	<link rel="stylesheet" href="/stylesheets/welcome.css"/>
-	<object id="usMap" type="image/svg+xml" data="images/us_state_map.svg">Your browser doesn't support SVGs :(</object>
+	<h2>U.S. House of Representatives</h2>
+	<div id="usMapDiv">
+		<span>(Click to see congressional districts for each state)</span>
+		<object id="usMap" type="image/svg+xml" data="images/us_state_map.svg">Your browser doesn't support SVGs :(</object>
+	</div>
 	<div id="repCanvasDiv">
 		<canvas id="repCanvas"></canvas>
 	</div>

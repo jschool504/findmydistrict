@@ -24,3 +24,9 @@
 	font-size: 15pt;
 	float: left;
 }
+
+@media (max-width: 728px) {
+	#stateMapDiv {
+		width: 100%;
+	}
+}
