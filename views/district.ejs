@@ -1,101 +1,101 @@
 <% include partials/header %>
-				<div class="layout_div" id="resultDiv">
-					<p id="mapIntro">You are in...</p>
-					<h2><%= state %>'s <%= englishDistrict %> District</h2>
-					<div id="mapDiv">
-						<div id="imgDiv">
-							<span id="districtName" style="display: none;"><%= stateName %>-<%= district %></span>
-							<object id="districtMap" type="image/svg+xml" data="/images/<%= stateName %>.svg"></object>
-						</div>
-						<div id="repContainerDiv">
-							<div id="repDiv">
-							<% if (representative != "Vacant") { %>
-								<h3><b><%= representative.first_name %> <%= representative.middle_name %> <%= representative.last_name %></b> <span id="party"><%= representative.party %></span></h3>
-								<p><img width="16px" src="/images/compass-1-64x64.png"/> <% if (representative.website == null) { %>None<% } else { %><a href="<%= representative.website %>"><%= representative.website.split('//')[1] %><% } %></a></p>
-								<p><img width="16px" src="/images/mail-3-64x64.png"/> <% if (representative.contact_form == null) { %>None<% } else { %><a href="<%= representative.contact_form %>"><%= representative.contact_form.split('//')[1] %><% } %></a></p>
-								<p><img width="16px" src="/images/facebook1-64x64.png"/> <a href="https://www.facebook.com/<%= representative.facebook_id %>">facebook.com/<%= representative.facebook_id %></a></p>
-								<p><img width="16px" src="/images/twitter-64x64.png"/> <a href="https://www.twitter.com/<%= representative.twitter_id %>">twitter.com/<%= representative.twitter_id %></a></p>
-								<p><img width="16px" src="/images/phone-1-64x64.png"/> <%= representative.phone %></p>
-								<p><img width="16px" src="/images/building-3-64x64.png"/> <a href="https://www.google.com/maps/search/<%= representative.office %>, DC"><%= representative.office %>, D.C.</a></p>
-							<% } else if (representative == "Vacant") { %>
-								<p>Oh dear, it looks like this House seat is vacant right now! Feel free to check out some of the cool stats below while you're here :)</p>
-							<% } else { %>
-								<p>Sorry, couldn't find any representative information for this district.</p>
-							<% } %>
-							</div>
-						</div>
-					</div>
-					<div id="districtDiv">
-						<h3 id="demoLabel">Statistics</h3>
-						<div id="statsDiv">
-							<div class="stats_col" id="statsLeft">
-								<div class="stats">
-									<h4>Population</h4>
-									<canvas id="popChart"></canvas>
-									<div class="district_data">
-										<div><div class="pop color_box"></div><span class="pop datum commify"><%= data.total_pop %></span> <span class="pop_label">Total Population</span><span> (<%= (data.total_pop / 710000 * 100).toFixed(1) %>% of average district size)</span></div>
-										<div><div class="pop color_box"></div><span class="pop datum commify"><%= data.total_workforce %></span> <span class="pop_label">Total Workforce</span> <span>(<%= ((data.total_workforce / data.total_pop) * 100).toFixed(1) %>%)</span></div>
-										<div><div class="pop color_box"></div><span class="pop datum commify"><%= data.unemployed_rate %></span> <span class="pop_label">Unemployed</span><span> (<%= (data.unemployed_rate / data.total_workforce * 100).toFixed(1) %>%)</span></div>
-										<div><div class="pop color_box"></div><span class="pop datum commify"><%= data.age_under_18 %></span> <span class="pop_label">Population Under 18</span> <span>(<%= ((data.age_under_18 / data.total_pop) * 100).toFixed(1) %>%)</span></div>
-									</div>
-								</div>
-								<div class="stats">
-									<h4>Average Earnings By Race</h4>
-									<canvas id="earningsChart"></canvas>
-									<div id="earningsData" class="district_data">
-										<div><div class="color_box" style="background-color: #f77"></div>$<span class="earnings datum commify"><%= data.white_earnings %></span> White</div>
-										<div><div class="color_box" style="background-color: #aee"></div>$<span class="earnings datum commify"><%= data.black_earnings %></span> Black/African American</div>
-										<div><div class="color_box" style="background-color: #a50"></div>$<span class="earnings datum commify"><%= data.asian_earnings %></span> Asian</div>
-										<div><div class="color_box" style="background-color: #55f"></div>$<span class="earnings datum commify"><%= data.am_earnings %></span> Native American/Alaskan</div>
-										<div><div class="color_box" style="background-color: #ffa"></div>$<span class="earnings datum commify"><%= data.haw_earnings %></span> Native Hawaiian/Pacific Islander</div>
-										<div><div class="color_box" style="background-color: #fbfbfb"></div>$<span class="earnings datum commify"><%= data.other_earnings %></span> Other</div>
-									</div>
-								</div>
-								<div class="stats">
-									<h4>2014 Election Results</h4>
-									<div id="electionData" class="district_data">
-										<% if (election_data.voted !== -2) { %>
-											<canvas id="electionChart"></canvas>
-											<% for (var i = 0; i < election_data.length - 1; i++) { %>
-												<div><div class="color_box election"></div><span class="election datum"><%= (election_data[i].general_votes / election_data.pop * 100).toFixed(2) %></span>% <span class="party"><%= election_data[i].party %></span> <span class="candidate_name"><%= election_data[i].candidate_name_first %> <%= election_data[i].candidate_name_last %></span> (<span class="commify"><%= election_data[i].general_votes %></span>)</div>
-											<% } %>
-											<div><div class="color_box election"></div><span class="election datum"><%= (((election_data.pop - election_data.voted) / election_data.pop) * 100).toFixed(2) %></span>% <span class="candidate_name">Did not vote</span><span style="display: none;" class="party"><%= election_data[i].party %></span> (<span class="commify"><%= election_data.pop - election_data.voted %></span>)</div>
-											<div><span class="datum commify"><%= election_data.pop %></span> <span>Potential Voters (citizens over 18)</div>
-										<% } else {%>
-											<div id="unopposed">
-												<p><%= election_data[0].candidate_name_first %> <%= election_data[0].candidate_name_last %> ran unopposed!</p>
-												<p>That's boring :-(</p>
-											</div>
-										<% } %>
-									</div>
-								</div>
-							</div>
-							<div class="stats_col" id="statsRight">
-								<div class="stats">
-									<h4>Race</h4>
-									<canvas id="raceChart"></canvas>
-									<div id="raceData" class="district_data">
-										<div><div class="color_box" style="background-color: #f77"></div><span class="datum" id="white_percent"><%= data.white_percent %></span>% White</div>
-										<div><div class="color_box" style="background-color: #aee"></div><span class="datum" id="black_percent"><%= data.black_percent %></span>% Black/African American</div>
-										<div><div class="color_box" style="background-color: #a50"></div><span class="datum" id="asian_percent"><%= data.asian_percent %></span>% Asian</div>
-										<div><div class="color_box" style="background-color: #55f"></div><span class="datum" id="am_percent"><%= data.am_percent %></span>% Native American/Alaskan</div>
-										<div><div class="color_box" style="background-color: #ffa"></div><span class="datum" id="haw_percent"><%= data.haw_percent %></span>% Native Hawaiian/Pacific Islander</div>
-										<div><div class="color_box" style="background-color: #fbfbfb"></div><span class="datum" id="other_percent"><%= data.other_percent %></span>% Other</div>
-									</div>
-								</div>
-								<div class="stats">
-									<h4>Education</h4>
-									<canvas id="eduChart"></canvas>
-									<div id="eduData" class="district_data">
-										<div><div class="edu color_box"></div><span class="degree datum"><%= data.non_higher_edu %></span>% <span class="degree_name">No Higher Education</span></div>
-										<div><div class="edu color_box"></div><span class="degree datum"><%= data.assoc_edu %></span>% <span class="degree_name">Associate's Degree/Some College</span></div>
-										<div><div class="edu color_box"></div><span class="degree datum"><%= data.bach_edu %></span>% <span class="degree_name">Bachelor's Degree</span></div>
-										<div><div class="edu color_box"></div><span class="degree datum"><%= data.grad_edu %></span>% <span class="degree_name">Graduate Degree</span></div>
-									</div>
-								</div>
-							</div>
-						</div>
-						<script src="js/district.js"></script>
+<script src="../../../js/district.js" defer></script>
+<div class="layout_div" id="resultDiv">
+	<p id="mapIntro">You are in...</p>
+	<h2><%= state %>'s <%= englishDistrict %> District</h2>
+	<div id="mapDiv">
+		<div id="imgDiv">
+			<span id="districtName" style="display: none;"><%= stateName %>-<%= district %></span>
+			<object id="districtMap" type="image/svg+xml" data="/images/<%= stateName %>.svg"></object>
+		</div>
+		<div id="repContainerDiv">
+			<div id="repDiv">
+			<% if (representative != "Vacant") { %>
+				<h3><b><%= representative.first_name %> <%= representative.middle_name %> <%= representative.last_name %></b> <span id="party"><%= representative.party %></span></h3>
+				<p><img width="16px" src="/images/compass-1-64x64.png"/> <% if (representative.website == null) { %>None<% } else { %><a href="<%= representative.website %>"><%= representative.website.split('//')[1] %><% } %></a></p>
+				<p><img width="16px" src="/images/mail-3-64x64.png"/> <% if (representative.contact_form == null) { %>None<% } else { %><a href="<%= representative.contact_form %>"><%= representative.contact_form.split('//')[1] %><% } %></a></p>
+				<p><img width="16px" src="/images/facebook1-64x64.png"/> <a href="https://www.facebook.com/<%= representative.facebook_id %>">facebook.com/<%= representative.facebook_id %></a></p>
+				<p><img width="16px" src="/images/twitter-64x64.png"/> <a href="https://www.twitter.com/<%= representative.twitter_id %>">twitter.com/<%= representative.twitter_id %></a></p>
+				<p><img width="16px" src="/images/phone-1-64x64.png"/> <%= representative.phone %></p>
+				<p><img width="16px" src="/images/building-3-64x64.png"/> <a href="https://www.google.com/maps/search/<%= representative.office %>, DC"><%= representative.office %>, D.C.</a></p>
+			<% } else if (representative == "Vacant") { %>
+				<p>Oh dear, it looks like this House seat is vacant right now! Feel free to check out some of the cool stats below while you're here :)</p>
+			<% } else { %>
+				<p>Sorry, couldn't find any representative information for this district.</p>
+			<% } %>
+			</div>
+		</div>
+	</div>
+	<div id="districtDiv">
+		<h3 id="demoLabel">Statistics</h3>
+		<div id="statsDiv">
+			<div class="stats_col" id="statsLeft">
+				<div class="stats">
+					<h4>Population</h4>
+					<canvas id="popChart"></canvas>
+					<div class="district_data">
+						<div><div class="pop color_box"></div><span class="pop datum commify"><%= data.total_pop %></span> <span class="pop_label">Total Population</span><span> (<%= (data.total_pop / 710000 * 100).toFixed(1) %>% of average district size)</span></div>
+						<div><div class="pop color_box"></div><span class="pop datum commify"><%= data.total_workforce %></span> <span class="pop_label">Total Workforce</span> <span>(<%= ((data.total_workforce / data.total_pop) * 100).toFixed(1) %>%)</span></div>
+						<div><div class="pop color_box"></div><span class="pop datum commify"><%= data.unemployed_rate %></span> <span class="pop_label">Unemployed</span><span> (<%= (data.unemployed_rate / data.total_workforce * 100).toFixed(1) %>%)</span></div>
+						<div><div class="pop color_box"></div><span class="pop datum commify"><%= data.age_under_18 %></span> <span class="pop_label">Population Under 18</span> <span>(<%= ((data.age_under_18 / data.total_pop) * 100).toFixed(1) %>%)</span></div>
 					</div>
 				</div>
+				<div class="stats">
+					<h4>Average Earnings By Race</h4>
+					<canvas id="earningsChart"></canvas>
+					<div id="earningsData" class="district_data">
+						<div><div class="color_box" style="background-color: #f77"></div>$<span class="earnings datum commify"><%= data.white_earnings %></span> White</div>
+						<div><div class="color_box" style="background-color: #aee"></div>$<span class="earnings datum commify"><%= data.black_earnings %></span> Black/African American</div>
+						<div><div class="color_box" style="background-color: #a50"></div>$<span class="earnings datum commify"><%= data.asian_earnings %></span> Asian</div>
+						<div><div class="color_box" style="background-color: #55f"></div>$<span class="earnings datum commify"><%= data.am_earnings %></span> Native American/Alaskan</div>
+						<div><div class="color_box" style="background-color: #ffa"></div>$<span class="earnings datum commify"><%= data.haw_earnings %></span> Native Hawaiian/Pacific Islander</div>
+						<div><div class="color_box" style="background-color: #fbfbfb"></div>$<span class="earnings datum commify"><%= data.other_earnings %></span> Other</div>
+					</div>
+				</div>
+				<div class="stats">
+					<h4>2014 Election Results</h4>
+					<div id="electionData" class="district_data">
+						<% if (election_data.voted !== -2) { %>
+							<canvas id="electionChart"></canvas>
+							<% for (var i = 0; i < election_data.length - 1; i++) { %>
+								<div><div class="color_box election"></div><span class="election datum"><%= (election_data[i].general_votes / election_data.pop * 100).toFixed(2) %></span>% <span class="party"><%= election_data[i].party %></span> <span class="candidate_name"><%= election_data[i].candidate_name_first %> <%= election_data[i].candidate_name_last %></span> (<span class="commify"><%= election_data[i].general_votes %></span>)</div>
+							<% } %>
+							<div><div class="color_box election"></div><span class="election datum"><%= (((election_data.pop - election_data.voted) / election_data.pop) * 100).toFixed(2) %></span>% <span class="candidate_name">Did not vote</span><span style="display: none;" class="party"><%= election_data[i].party %></span> (<span class="commify"><%= election_data.pop - election_data.voted %></span>)</div>
+							<div><span class="datum commify"><%= election_data.pop %></span> <span>Potential Voters (citizens over 18)</div>
+						<% } else {%>
+							<div id="unopposed">
+								<p><%= election_data[0].candidate_name_first %> <%= election_data[0].candidate_name_last %> ran unopposed!</p>
+								<p>That's boring :-(</p>
+							</div>
+						<% } %>
+					</div>
+				</div>
+			</div>
+			<div class="stats_col" id="statsRight">
+				<div class="stats">
+					<h4>Race</h4>
+					<canvas id="raceChart"></canvas>
+					<div id="raceData" class="district_data">
+						<div><div class="color_box" style="background-color: #f77"></div><span class="datum" id="white_percent"><%= data.white_percent %></span>% White</div>
+						<div><div class="color_box" style="background-color: #aee"></div><span class="datum" id="black_percent"><%= data.black_percent %></span>% Black/African American</div>
+						<div><div class="color_box" style="background-color: #a50"></div><span class="datum" id="asian_percent"><%= data.asian_percent %></span>% Asian</div>
+						<div><div class="color_box" style="background-color: #55f"></div><span class="datum" id="am_percent"><%= data.am_percent %></span>% Native American/Alaskan</div>
+						<div><div class="color_box" style="background-color: #ffa"></div><span class="datum" id="haw_percent"><%= data.haw_percent %></span>% Native Hawaiian/Pacific Islander</div>
+						<div><div class="color_box" style="background-color: #fbfbfb"></div><span class="datum" id="other_percent"><%= data.other_percent %></span>% Other</div>
+					</div>
+				</div>
+				<div class="stats">
+					<h4>Education</h4>
+					<canvas id="eduChart"></canvas>
+					<div id="eduData" class="district_data">
+						<div><div class="edu color_box"></div><span class="degree datum"><%= data.non_higher_edu %></span>% <span class="degree_name">No Higher Education</span></div>
+						<div><div class="edu color_box"></div><span class="degree datum"><%= data.assoc_edu %></span>% <span class="degree_name">Associate's Degree/Some College</span></div>
+						<div><div class="edu color_box"></div><span class="degree datum"><%= data.bach_edu %></span>% <span class="degree_name">Bachelor's Degree</span></div>
+						<div><div class="edu color_box"></div><span class="degree datum"><%= data.grad_edu %></span>% <span class="degree_name">Graduate Degree</span></div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
 <% include partials/footer %>

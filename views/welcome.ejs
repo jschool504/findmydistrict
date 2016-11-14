@@ -1,32 +1,39 @@
 <% include partials/header %>
 <div id="welcomeDiv">
+	<link rel="stylesheet" href="/stylesheets/welcome.css"/>
+	<script src="/js/helpers.js"></script>
 	<div>
 		<h2><span style="color: darkred"><%= republicans %></span> to <span style="color: darkblue"><%= democrats %></span> <span style="font-size:15pt;">The <% if (republicans > democrats) { %> Republican <% } else if (democrats > republicans) { %> Democratic <% } %> Party controls the House by <%= Math.abs(democrats - republicans) %> representatives</span></h2>
 		<hr>
 		<!--<h2><b><%= ((Date.parse("Nov 8, 2016") - Date.now()) / 1000 / 60 / 60 / 24).toFixed(0) %></b> <span style="font-size:15pt;">days to the next election</span></h2>-->
 	</div>
-	<object id="usMap" type="image/svg+xml" data="images/us_map.svg">Your browser doesn't support SVGs :(</object>
+	<object id="usMap" type="image/svg+xml" data="images/us_state_map.svg">Your browser doesn't support SVGs :(</object>
 	<!--<canvas id="mapCanvas"></canvas>-->
 	<script src="js/house.js" defer></script>
-	<div style="display: ;">
+	<!--
+	<div id="states">
+		<div class="stateDiv" id="stateLeft">
 		<% states.forEach(function(state, i) {  %>
-			<div style="background-color: lightgray; margin-bottom: 5px;">
+			<div>
+				<span class="state datum"><%= state[0] %></span>
 				<div>
-					<span class="state datum"><%= state[0] %></span>
-					<div>
-					<% representatives.forEach(function(rep) { %>
-						<% if (rep.state == state[1]) { %>
-							<div>
-								<span class="district datum"><%= state[1] %>-<%= rep.district %></span>
-								<span class="party datum"><%= rep.party %></span>
-								
-							</div>
-						<% } %>
-					<% }); %>
-					</div>
+				<% representatives.forEach(function(rep) { %>
+					<% if (rep.state == state[1]) { %>
+						<div>
+							<span class="district datum"><%= state[1] %>-<%= rep.district %></span>
+							<span class="party datum"><%= rep.party %></span>
+						</div>
+					<% } %>
+				<% }); %>
 				</div>
 			</div>
+			<% if (i == 23) { %>
+				</div>
+				<div class="stateDiv" id="stateRight">
+			<% } %>
 		<% }); %>
+		</div>
 	</div>
+	-->
 </div>
 <% include partials/footer %>

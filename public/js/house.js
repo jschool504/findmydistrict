@@ -2,6 +2,72 @@ var us_map = document.getElementById("usMap");
 
 us_map.onload = function() {
 	var doc = us_map.contentDocument;
+	var stateRequest = new Request("/api/states/");
+	fetch(stateRequest).then(function(res) {
+		return res.json();
+	}).then(function(response) {
+		
+		var stateRatios = {};
+		
+		response.forEach(function(d) {
+			
+		});
+		
+		var gStates = doc.getElementsByClassName("state");
+		for (var i = 0; i < gStates.length; i++) {
+			var gState = gStates[i];
+			
+			var d_ratio = 0.0, r_ratio = 0.0;
+			var dc = 0, rc = 0;
+			
+			response.forEach(function(d) {
+				if (d.state == gState.id) {
+			
+					if (d.state !== "GU" && d.state !== "VI" && d.state !== "PR" && d.state !== "MP") {
+						if (d.party == "Democrat") {
+							dc += 1;
+						} else if (d.party == "Republican") {
+							rc += 1;
+						}
+					}
+				}
+			});
+			
+			d_color = 210 * (dc / (rc + dc));
+			r_color = 210 * (rc / (rc + dc));
+			gState.style.fill = "rgb(" + parseInt(r_color) + ", 0, " + parseInt(d_color) + ")";
+			gState.style.strokeWidth = "1px";
+			gState.style.strokeOpacity = "1";
+			gState.style.stroke = "#fff";
+			
+			gState.addEventListener("mouseleave", function(e) {
+				e.currentTarget.style.fill = e.currentTarget.style.old_fill;
+				e.currentTarget.style.transform = "scale(1)";
+			});
+			
+			gState.addEventListener("mouseenter", function(e) {
+				
+				e.currentTarget.style.old_fill = e.currentTarget.style.fill;
+				var rgb = [];
+				e.currentTarget.style.fill.split("(")[1].split(")")[0].split(", ").forEach(function(c) {rgb.push(parseInt(c)+32)});
+				e.currentTarget.style.fill = "rgb(" + rgb.join(", ") + ")";
+				
+				//e.currentTarget.style.transform = "scale(1.2)";
+				var svg = e.currentTarget.parentNode;
+				//svg.removeChild(e.currentTarget);
+				//svg.appendChild(e.currentTarget);
+			});
+			
+			gState.addEventListener("mouseup", function(e) {
+				window.location.href = "/states/" + e.currentTarget.id;
+			});
+		}
+	});
+}
+
+/*
+us_map.onload = function() {
+	var doc = us_map.contentDocument;
 	
 	var repStateElements = document.getElementsByClassName("state datum");
 	var states = Array.prototype.slice.call(repStateElements);
@@ -71,4 +137,13 @@ us_map.onload = function() {
 		
 		});
 	});
+	
+	var districts = document.getElementsByClassName("district datum");
+	for (var i = 0; i < districts.length; i++) {
+		var district = districts[i].textContent.split("-");
+		if (district[0] !== "VI") {
+			districts[i].textContent = helpers.expandStateName(district[1]);
+		}
+	}
 };
+*/

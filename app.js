@@ -206,6 +206,14 @@ app.get("/search", function(request, response){
 	});
 });
 
+app.get("/states/:name/districts/:num", function(request, response) {
+	renderDistrict([request.params.name, request.params.num, helpers.censusStateNumber(request.params.name)], request, response);
+});
+
+app.get("/states/:name", function(request, response) {
+	response.render("state", {title: request.params.name});
+});
+
 app.get("/district", function(request, response) {
 	var district = request.query.q.split("-");
 	district.push(helpers.censusStateNumber(district[0]));
@@ -233,6 +241,40 @@ app.get("/atlarge", function(request, response) {
 app.get("/sitemap.xml", function(request, response) {
 	var map = fs.readFileSync("sitemap.xml").toString();
 	response.send(map);
+});
+
+//api
+
+app.get("/api/states/:name/districts/:num", function(request, response) {
+	var district_query = "SELECT * FROM congress114 WHERE type LIKE 'rep' AND state LIKE '" + request.params.name + "' AND district LIKE " + request.params.num;
+	console.log(district_query);
+	connection.query(district_query, function(err, rows) {
+		response.send(rows[0]);
+	});
+});
+
+app.get("/api/states/:name/districts", function(request, response) {
+	var district_query = "SELECT * FROM congress114 WHERE type LIKE 'rep' AND state LIKE '" + request.params.name + "' ORDER BY district ASC";
+	console.log(district_query);
+	connection.query(district_query, function(err, rows) {
+		response.send(rows);
+	});
+});
+
+app.get("/api/states", function(request, response) {
+	var state_query = "SELECT * FROM congress114 WHERE type LIKE 'rep'";
+	console.log(state_query);
+	connection.query(state_query, function(err, rows) {
+		response.send(rows);
+	});
+});
+
+app.get("/api/states/:name", function(request, response) {
+	var state_query = "SELECT * FROM congress114 WHERE type LIKE 'rep' AND state LIKE '" + request.params.name + "'";
+	console.log(state_query);
+	connection.query(state_query, function(err, rows) {
+		response.send(rows[0]);
+	});
 });
 
 app.listen(80, function() {
