@@ -40,15 +40,15 @@ us_map.onload = function() {
 					if (c_width > 96 || c_height > 96) {
 						scaleAmount = 1.1;
 					} else if (c_width > 48 || c_height > 48) {
-						scaleAmount = 1.3;
+						scaleAmount = 1.2;
 					} else if (c_width > 32 || c_height > 32) {
-						scaleAmount = 1.5;
+						scaleAmount = 1.3;
 					} else if (c_width > 24 || c_height > 24) {
-						scaleAmount = 1.8;
+						scaleAmount = 1.4;
 					} else if (c_width > 12 || c_height > 12) {
-						scaleAmount = 2.1;
+						scaleAmount = 1.5;
 					} else {
-						scaleAmount = 3;
+						scaleAmount = 1.6;
 					}
 					
 					//console.log([c_width, ((0.0005 * (c_width ^ 2)) + 15),  scaleAmount].join(", "));
