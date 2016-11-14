@@ -131,9 +131,6 @@ a:hover {
 	padding: 10px;
 }
 
-#repDiv {
-}
-
 #repDiv > h3, #districtDiv > h3 {
 	font-weight: bold;
 	margin-top: 0;
@@ -389,12 +386,6 @@ a:hover {
 
 @media (max-width: 728px) {
 	#adDiv {
-		display: none;
-	}
-}
-
-@media (max-width: 900px) {
-	#usMap {
 		display: none;
 	}
 }

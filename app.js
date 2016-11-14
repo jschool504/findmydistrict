@@ -247,7 +247,7 @@ app.get("/sitemap.xml", function(request, response) {
 
 app.get("/api/states/:name/districts/:num", function(request, response) {
 	var district_query = "SELECT * FROM congress114 WHERE type LIKE 'rep' AND state LIKE '" + request.params.name + "' AND district LIKE " + request.params.num;
-	console.log(district_query);
+
 	connection.query(district_query, function(err, rows) {
 		response.send(rows[0]);
 	});
@@ -255,7 +255,7 @@ app.get("/api/states/:name/districts/:num", function(request, response) {
 
 app.get("/api/states/:name/districts", function(request, response) {
 	var district_query = "SELECT * FROM congress114 WHERE type LIKE 'rep' AND state LIKE '" + request.params.name + "' ORDER BY district ASC";
-	console.log(district_query);
+
 	connection.query(district_query, function(err, rows) {
 		response.send(rows);
 	});
@@ -263,7 +263,7 @@ app.get("/api/states/:name/districts", function(request, response) {
 
 app.get("/api/states", function(request, response) {
 	var state_query = "SELECT * FROM congress114 WHERE type LIKE 'rep'";
-	console.log(state_query);
+
 	connection.query(state_query, function(err, rows) {
 		response.send(rows);
 	});
@@ -271,9 +271,44 @@ app.get("/api/states", function(request, response) {
 
 app.get("/api/states/:name", function(request, response) {
 	var state_query = "SELECT * FROM congress114 WHERE type LIKE 'rep' AND state LIKE '" + request.params.name + "'";
-	console.log(state_query);
+	
 	connection.query(state_query, function(err, rows) {
-		response.send(rows[0]);
+		var censusQuery = "http://api.census.gov/data/2015/acs1?get=" + reqFields.join(",") + "&for=state:" + helpers.censusStateNumber(request.params.name) + "&key=8b984e052c12d4e2e2322af26f46f3a7674aec46";
+		console.log(censusQuery);
+		req(censusQuery, function(i_api_error, i_api_response, i_api_body) {
+			try {
+				var acs = JSON.parse(i_api_response.body);
+			} catch (e) {
+				console.log(i_api_response.body);
+				console.log("Error with response from Census...");
+			}
+			
+			var data =	{
+							avg_earnings: parseInt(acs[1][0]),
+							white_earnings: parseInt(acs[1][1]),
+							black_earnings: parseInt(acs[1][2]),
+							asian_earnings: parseInt(acs[1][3]),
+							am_earnings: parseInt(acs[1][4]),
+							haw_earnings: parseInt(acs[1][5]),
+							other_earnings: parseInt((acs[1][6] + acs[1][7]) / 2),
+							total_workforce: parseInt(acs[1][8]),
+							unemployed_rate: parseInt(acs[1][9]),
+							age_under_18: acs[1][10],
+							assoc_edu: parseInt(acs[1][11]),
+							bach_edu: parseInt(acs[1][12]),
+							grad_edu: parseInt(acs[1][13]),
+							non_higher_edu: parseInt(acs[1][11]) + parseInt(acs[1][12]) + parseInt(acs[1][13]),
+							total_pop: parseInt(acs[1][14]),
+							white_pop: parseInt(acs[1][15]),
+							black_pop: parseInt(acs[1][16]),
+							am_pop: parseInt(acs[1][17]),
+							asian_pop: parseInt(acs[1][18]),
+							haw_pop: parseInt(acs[1][19]),
+							other_pop: parseInt(acs[1][20])
+						};
+
+			response.send({district_data: rows, state_data: data});
+		});
 	});
 });
 

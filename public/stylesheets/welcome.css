@@ -16,3 +16,15 @@
 	float: left;
 	width: 400px;
 }
+
+@media (max-width: 900px) {
+	#usMap {
+		display: none;
+	}
+}
+
+@media (min-width: 900px) {
+	#repCanvasDiv {
+		display: none;
+	}
+}

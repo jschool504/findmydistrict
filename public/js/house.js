@@ -9,10 +9,6 @@ us_map.onload = function() {
 		
 		var stateRatios = {};
 		
-		response.forEach(function(d) {
-			
-		});
-		
 		var gStates = doc.getElementsByClassName("state");
 		for (var i = 0; i < gStates.length; i++) {
 			var gState = gStates[i];
@@ -64,6 +60,18 @@ us_map.onload = function() {
 		}
 	});
 }
+
+Chart.defaults.global.legend.display = false;
+
+var repCtx = document.getElementById("repCanvas");
+
+var repData = [247, 188];
+
+var rcds = [{data: repData, backgroundColor: ["#e00", "#00e"], hoverBackgroundColor: ["#f00", "#00f"], borderColor: "#fff", borderWidth: 2}];
+var rcdt = {labels: ["Republicans", "Democrats"], datasets: rcds};
+var repOpt = {animation: false};
+
+var rep_canvas = new Chart(repCtx, {type: "doughnut", data: rcdt, options: repOpt});
 
 /*
 us_map.onload = function() {

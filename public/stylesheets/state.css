@@ -5,7 +5,7 @@ path {
 	font-weight:400;
 	stroke-linecap:square;
 	stroke-linejoin:bevel;
-	stroke-width:0.2;
+	stroke-width:0.1pt;
 	stroke:#fff;
 	transform-origin: 50% 50%;
 	transition: 0.2s;
