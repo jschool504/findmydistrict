@@ -133,6 +133,8 @@ function renderDistrict(d, request, response) {
 				} else {
 					response.send("There was an error contacting the Census API. Please report this to contactfindmydistrict@gmail.com");
 				}
+			} else {
+				response.send("There was an error contacting the Census API. Please report this to contactfindmydistrict@gmail.com");
 			}
 		});
 	});
@@ -211,7 +213,11 @@ app.get("/states/:name/districts/:num", function(request, response) {
 });
 
 app.get("/states/:name", function(request, response) {
-	response.render("state", {title: request.params.name});
+	if (helpers.censusStateNumber(request.params.name) !== -1) {
+		response.render("state", {title: request.params.name});
+	} else {
+		response.render("unknown", {title: "Place Not Found"});
+	}
 });
 
 app.get("/district", function(request, response) {
@@ -270,6 +276,7 @@ app.get("/api/states", function(request, response) {
 });
 
 app.get("/api/states/:name", function(request, response) {
+	
 	var state_query = "SELECT * FROM congress114 WHERE type LIKE 'rep' AND state LIKE '" + request.params.name + "'";
 	
 	connection.query(state_query, function(err, rows) {
