@@ -20,9 +20,19 @@
 
 #stateInfoDiv {
 	margin-left: 20px;
-	width: 300px;
+	width: 350px;
 	font-size: 15pt;
 	float: left;
+}
+
+.demo_div {
+	width: auto;
+	padding-left: 5px;
+}
+
+.demo_div:hover {
+	color: white;
+	background-color: black;
 }
 
 @media (max-width: 728px) {

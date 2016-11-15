@@ -10,7 +10,6 @@ state_map.onload = function() {
 		for (var i = 0; i < gDistricts.length; i++) {
 			var gDistrict = gDistricts[i];
 			var gDistrictNum = gDistrict.id.split("-")[1];
-			console.log(districts);
 			if (districts[i].party == "Democrat") {
 				gDistrict.style.fill = "rgb(0, 0, 200)";
 			} else if (districts[i].party == "Republican") {
@@ -78,6 +77,23 @@ fetch(stateRequest).then(function(res) {
 	document.getElementById("repHeaderLabel").style.fontWeight = "bold";
 	document.getElementById("popHeaderLabel").style.fontWeight = "bold";
 	document.getElementById("empHeaderLabel").style.fontWeight = "bold";
+	
+	var demo_divs = document.getElementsByClassName("demo_div");
+	var gDistricts = state_map.contentDocument.getElementsByTagName("path");
+	
+	for (var i = 0; i < demo_divs.length; i++) {
+		if (demo_divs[i].children[1].id == "popLabel") {
+			state.district_data.forEach(function(district) {
+				//find corressponding gDistrict
+				for (var g = 0; g < gDistricts.length; g++) {
+					if ((district.state + "-" + district.district) == gDistrict[g].id) {
+						console.log(district.);
+						g = gDistricts.length; //end loop
+					}
+				}
+			});
+		}
+	}
 	
 	// commify any needed numbers
 	var commaNums = document.getElementsByClassName("commify");
