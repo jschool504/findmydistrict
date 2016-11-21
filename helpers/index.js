@@ -51,7 +51,9 @@ var states = {
 	"WA" : "Washington-53",
 	"WV" : "West Virginia-54",
 	"WI" : "Wisconsin-55",
-	"WY" : "Wyoming-56"
+	"WY" : "Wyoming-56"/*,
+	"AS" : "American Samoa-60",
+	"PR" : "Puerto Rico-72"*/
 };
 
 var parties = {

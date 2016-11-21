@@ -12,7 +12,7 @@ module.exports = {
 			host: "localhost",
 			user: "root",
 			password: "Jeremydelta5",
-			database: "elections"
+			database: "congressional_districts"
 		});
 	}
 };
