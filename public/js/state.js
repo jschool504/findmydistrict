@@ -86,8 +86,8 @@ fetch(stateRequest).then(function(res) {
 			state.district_data.forEach(function(district) {
 				//find corressponding gDistrict
 				for (var g = 0; g < gDistricts.length; g++) {
-					if ((district.state + "-" + district.district) == gDistrict[g].id) {
-						console.log(district.);
+					if ((district.state + "-" + district.district) == gDistricts[g].id) {
+						console.log(district);
 						g = gDistricts.length; //end loop
 					}
 				}
