@@ -16,13 +16,14 @@ var seedDB = require("./seed");
 db.createConnection();
 var connection = db.getConnection();
 
-seedDB(connection);
+//seedDB(connection);
 
 app.use(bodyParser.urlencoded({extended: true}));
 app.set("view engine", "ejs");
 app.use(express.static(__dirname + "/public"));
 
 app.locals.districtEnding = helpers.districtEnding;
+app.locals.expandStateName = helpers.expandStateName;
 
 // Fields for census api request
 var reqFields = [
@@ -55,124 +56,35 @@ var reqFields = [
 ];
 
 function renderDistrict(d, request, response) {
-
-	// DC has to be treated slightly differently. 
-	var districtQuery = "&for=congressional+district:" + d[1] + "&in";
-	if (d[0] == "DC") {
-		districtQuery = "&for";
-	}
-	
-	connection.query("SELECT first_name,last_name,party,website,facebook_id,twitter_id,office,phone FROM congress114 WHERE type LIKE 'rep' AND state LIKE '" + d[0] + "' AND district LIKE '" + d[1] + "'", function(err, rep_rows) {
-		var censusQuery = "http://api.census.gov/data/2015/acs1?get=" + reqFields.join(",") + districtQuery +"=state:" + d[2] + "&key=8b984e052c12d4e2e2322af26f46f3a7674aec46";
-		console.log(censusQuery);
-		
-		req(censusQuery, function(i_api_error, i_api_response, i_api_body) {
-			if (i_api_response.statusCode == 200) {
-				var err;
-				try {
-					var acs = JSON.parse(i_api_response.body);
-				} catch (e) {
-					err = e;
-					console.log(i_api_response.body);
-					console.log("Error with response from Census...");
-				}
-			
-				if (err == null) {
-					acs[1][6] = parseInt((parseInt(acs[1][6]) + parseInt(acs[1][7]))/2);
-		
-					for (var i in acs[1]) {
-						if (acs[1][i] == null) {
-							acs[1][i] = "-";
-						} else {
-							acs[1][i] = parseInt(acs[1][i]);
-						}
-					}
-		
-					var data =	{
-									avg_earnings: helpers.commify(acs[1][0].toString()),
-									white_earnings: acs[1][1],
-									black_earnings: acs[1][2],
-									asian_earnings: acs[1][3],
-									am_earnings: acs[1][4],
-									haw_earnings: acs[1][5],
-									other_earnings: parseInt((acs[1][6] + acs[1][7]) / 2),
-									total_workforce: acs[1][8],
-									unemployed_rate: acs[1][9],
-									age_under_18: acs[1][10],
-									assoc_edu: (acs[1][11] / acs[1][14] * 100).toFixed(1),
-									bach_edu: (acs[1][12] / acs[1][14] * 100).toFixed(1),
-									grad_edu: (acs[1][13] / acs[1][14] * 100).toFixed(1),
-									non_higher_edu: (((acs[1][14] - (acs[1][11] + acs[1][12] + acs[1][13])) / acs[1][14]) * 100).toFixed(1),
-									total_pop: acs[1][14],
-									white_percent: (acs[1][15] / acs[1][14] * 100).toFixed(1),
-									black_percent: (acs[1][16] / acs[1][14] * 100).toFixed(1),
-									am_percent: (acs[1][17] / acs[1][14] * 100).toFixed(1),
-									asian_percent: (acs[1][18] / acs[1][14] * 100).toFixed(1),
-									haw_percent: (acs[1][19] / acs[1][14] * 100).toFixed(1),
-									other_percent: ((acs[1][20] + acs[1][21]) / acs[1][14] * 100).toFixed(1)
-								};
-		
-					var thing = "SELECT candidate_name_first,candidate_name_last,party,general_votes FROM house_election_2014 WHERE state LIKE '" + d[0] + "' AND district LIKE " + d[1] + " AND general_votes NOT LIKE -1";
-				
-					connection.query(thing, function(err, election_data) {
-						console.log(err);
-						election_data.pop = acs[1][14] - acs[1][10];
-						election_data.voted = election_data[election_data.length - 1].general_votes;
-						console.log(rep_rows);
-						response.render("district", {
-							state: helpers.expandStateName(d[0]),
-							stateName: d[0],
-							district: d[1],
-							englishDistrict: helpers.districtEnding(d[1]),
-							representative: rep_rows[0],
-							data: data,
-							election_data: election_data,
-							title: (d[0] + " " + d[1])
-						});
-					});
-				} else {
-					response.send("There was an error contacting the Census API. Please report this to contactfindmydistrict@gmail.com");
-				}
-			} else {
-				response.send("There was an error contacting the Census API. Please report this to contactfindmydistrict@gmail.com");
-			}
-		});
+	connection.query("select * from districts join states on districts.state_id=states.id join legislators on districts.id=legislators.district_id join statistics on districts.id=statistics.district_id WHERE states.name = '" + d[0] + "' AND districts.number = " + d[1], function(err, data) {
+		if (err == null) {
+			console.log(data);
+			response.render("district", {
+				district_data: data[0],
+				title: (d[0] + " " + d[1])
+			});
+		} else {
+			console.log(err);
+		}
 	});
 }
 
 app.get("/", function(request, response) {
-	var state_districts = [];
-	//console.log("starting sql state req");
 	
-	connection.query("SELECT DISTINCT state_name,state FROM house_election_2014", function(err, rows) {
-		rows.forEach(function(row) {
-			connection.query("SELECT DISTINCT district FROM house_election_2014 WHERE state_name LIKE '" + row.state_name + "'", function(err, drows) {
-				state_districts.push([row.state_name, row.state, drows.length]);
-			});
-		});
-	});
-	
-	req("https://www.govtrack.us/api/v2/role?role_type=representative&current=true&limit=6000", function(s_api_error, s_api_response, s_api_body) {
-		var resBody = JSON.parse(s_api_body);
-		var reps = resBody.objects;
-		reps.sort(function(a, b) {
-			var x = a.state.toLowerCase();
-			var y = b.state.toLowerCase();
-			return x < y ? - 1 : x > y ? 1 : 0;
-		});
-
+	connection.query("SELECT states.name,legislators.party FROM states join districts on districts.state_id=states.id join legislators on legislators.district_id=districts.id", function(err, rows) {
+		
 		var repCount = 0;
 		var demCount = 0;
-
-		for (i in reps) {
-			if (reps[i].party == "Democrat" && reps[i].state !== "VI" && reps[i].state !== "DC") {
+		
+		rows.forEach(function(rep, i) {
+			if (rep.party == "Democrat" && rep.name !== "VI" && rep.name !== "DC" && rep.name !== "PR" && rep.name !== "GU" && rep.name !== "AS") {
 				demCount += 1;
-			} else if (reps[i].party == "Republican" && reps[i].state !== "VI" && reps[i].state !== "DC") {
+			} else if (rep.party == "Republican" && rep.name !== "VI" && rep.name !== "DC" && rep.name !== "PR" && rep.name !== "GU" && rep.name !== "AS") {
 				repCount += 1;
 			}
-		}
-
-		response.render("welcome", {republicans: repCount, democrats: demCount, representatives: reps, states: state_districts, title: "Home"});
+		});
+		
+		response.render("welcome", {republicans: repCount, democrats: demCount, representatives: rows, states: rows[0], title: "Home"});
 	});
 });
 
@@ -268,54 +180,47 @@ app.get("/api/states/:name/districts", function(request, response) {
 });
 
 app.get("/api/states", function(request, response) {
-	var state_query = "SELECT * FROM congress114 WHERE type LIKE 'rep'";
+	var state_query = "SELECT * FROM states JOIN districts ON districts.state_id=states.id JOIN legislators ON legislators.district_id=districts.id JOIN statistics ON statistics.state_id=states.id";
 
 	connection.query(state_query, function(err, rows) {
-		response.send(rows);
+		
+		var state_districts = []; // form [[state,rcount,dcount],[state,rcount,dcount], ...]
+		
+		rows.forEach(function(res_district) {
+			// search for state name in state_districts
+			var l = state_districts.length;
+			var foundState = false;
+			for (var i = 0; i < l && foundState == false; i++) {
+				var state = state_districts[i];
+				if (state.name == res_district.name) {
+					if (res_district.party == "Republican") {
+						state.reps++;
+					} else if (res_district.party == "Democrat") {
+						state.dems++;
+					}
+					foundState = true;
+				}
+			}
+			
+			if (foundState == false) {
+				if (res_district.party == "Republican") {
+					state_districts.push({name: res_district.name, reps: 1, dems: 0});
+				} else if (res_district.party == "Democrat") {
+					state_districts.push({name: res_district.name, reps: 0, dems: 1});
+				}
+			}
+		});
+		
+		response.send(state_districts);
 	});
 });
 
 app.get("/api/states/:name", function(request, response) {
 	
-	var state_query = "SELECT * FROM congress114 WHERE type LIKE 'rep' AND state LIKE '" + request.params.name + "'";
+	var state_query = "SELECT * FROM states JOIN districts ON states.id=districts.state_id JOIN legislators ON districts.id=legislators.district_id JOIN statistics ON states.id=statistics.state_id WHERE states.name = '" + request.params.name.toUpperCase() + "' ORDER BY districts.number ASC";
 	
 	connection.query(state_query, function(err, rows) {
-		var censusQuery = "http://api.census.gov/data/2015/acs1?get=" + reqFields.join(",") + "&for=state:" + helpers.censusStateNumber(request.params.name) + "&key=8b984e052c12d4e2e2322af26f46f3a7674aec46";
-		console.log(censusQuery);
-		req(censusQuery, function(i_api_error, i_api_response, i_api_body) {
-			try {
-				var acs = JSON.parse(i_api_response.body);
-			} catch (e) {
-				console.log(i_api_response.body);
-				console.log("Error with response from Census...");
-			}
-			
-			var data =	{
-							avg_earnings: parseInt(acs[1][0]),
-							white_earnings: parseInt(acs[1][1]),
-							black_earnings: parseInt(acs[1][2]),
-							asian_earnings: parseInt(acs[1][3]),
-							am_earnings: parseInt(acs[1][4]),
-							haw_earnings: parseInt(acs[1][5]),
-							other_earnings: parseInt((acs[1][6] + acs[1][7]) / 2),
-							total_workforce: parseInt(acs[1][8]),
-							unemployed_rate: parseInt(acs[1][9]),
-							age_under_18: acs[1][10],
-							assoc_edu: parseInt(acs[1][11]),
-							bach_edu: parseInt(acs[1][12]),
-							grad_edu: parseInt(acs[1][13]),
-							non_higher_edu: parseInt(acs[1][11]) + parseInt(acs[1][12]) + parseInt(acs[1][13]),
-							total_pop: parseInt(acs[1][14]),
-							white_pop: parseInt(acs[1][15]),
-							black_pop: parseInt(acs[1][16]),
-							am_pop: parseInt(acs[1][17]),
-							asian_pop: parseInt(acs[1][18]),
-							haw_pop: parseInt(acs[1][19]),
-							other_pop: parseInt(acs[1][20])
-						};
-
-			response.send({district_data: rows, state_data: data});
-		});
+		response.send(rows);
 	});
 });
 

@@ -2,7 +2,7 @@ var state_map = document.getElementById("stateMap");
 
 state_map.onload = function() {
 	var doc = state_map.contentDocument;
-	var districtRequest = new Request("/api/states/" + document.title.split(" |")[0] + "/districts");
+	var districtRequest = new Request("/api/states/" + document.title.split(" |")[0]);
 	fetch(districtRequest).then(function(res) {
 		return res.json();
 	}).then(function(districts) {
@@ -41,16 +41,17 @@ document.getElementById("stateTitle").textContent = helpers.expandStateName(docu
 var stateRequest = new Request("/api/states/" + document.title.split(" |")[0]);
 fetch(stateRequest).then(function(res) {
 	return res.json();
-}).then(function(state) {
-	document.getElementById("popLabel").textContent = state.state_data.total_pop;
-	document.getElementById("avgIncomeLabel").textContent = state.state_data.avg_earnings;
-	document.getElementById("workforceLabel").textContent = state.state_data.total_workforce;
-	document.getElementById("votingAgeLabel").textContent = state.state_data.total_pop - state.state_data.age_under_18;
-	document.getElementById("unemploymentLabel").textContent = (state.state_data.unemployed_rate / state.state_data.total_workforce * 100).toFixed(1);
+}).then(function(districts) {
+	var state_data = districts[0];
+	document.getElementById("popLabel").textContent = state_data.population;
+	document.getElementById("avgIncomeLabel").textContent = state_data.average_earnings;
+	document.getElementById("workforceLabel").textContent = state_data.workforce;
+	document.getElementById("votingAgeLabel").textContent = state_data.population - state_data.minor_population;
+	document.getElementById("unemploymentLabel").textContent = (state_data.unemployed / state_data.workforce * 100).toFixed(1);
 	
 	var rc = 0, dc = 0, ivc = 0;
 	
-	state.district_data.forEach(function(district) {
+	districts.forEach(function(district) {
 		if (district.party == "Democrat") {
 			dc++;
 		} else if (district.party == "Republican") {

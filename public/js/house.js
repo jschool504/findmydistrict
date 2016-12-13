@@ -6,7 +6,6 @@ us_map.onload = function() {
 	fetch(stateRequest).then(function(res) {
 		return res.json();
 	}).then(function(response) {
-		
 		var stateRatios = {};
 		
 		var gStates = doc.getElementsByClassName("state");
@@ -17,15 +16,9 @@ us_map.onload = function() {
 			var dc = 0, rc = 0;
 			
 			response.forEach(function(d) {
-				if (d.state == gState.id) {
-			
-					if (d.state !== "GU" && d.state !== "VI" && d.state !== "PR" && d.state !== "MP") {
-						if (d.party == "Democrat") {
-							dc += 1;
-						} else if (d.party == "Republican") {
-							rc += 1;
-						}
-					}
+				if (d.name == gState.id) {
+					dc = d.dems;
+					rc = d.reps;
 				}
 			});
 			
