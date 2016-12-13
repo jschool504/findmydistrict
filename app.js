@@ -72,29 +72,19 @@ function renderDistrict(d, request, response) {
 app.get("/", function(request, response) {
 	
 	connection.query("SELECT states.name,legislators.party FROM states join districts on districts.state_id=states.id join legislators on legislators.district_id=districts.id", function(err, rows) {
-	
-		req("https://www.govtrack.us/api/v2/role?role_type=representative&current=true&limit=6000", function(s_api_error, s_api_response, s_api_body) {
-			var resBody = JSON.parse(s_api_body);
-			var reps = resBody.objects;
-			reps.sort(function(a, b) {
-				var x = a.state.toLowerCase();
-				var y = b.state.toLowerCase();
-				return x < y ? - 1 : x > y ? 1 : 0;
-			});
-
-			var repCount = 0;
-			var demCount = 0;
-
-			for (i in reps) {
-				if (reps[i].party == "Democrat" && reps[i].state !== "VI" && reps[i].state !== "DC") {
-					demCount += 1;
-				} else if (reps[i].party == "Republican" && reps[i].state !== "VI" && reps[i].state !== "DC") {
-					repCount += 1;
-				}
+		
+		var repCount = 0;
+		var demCount = 0;
+		
+		rows.forEach(function(rep, i) {
+			if (rep.party == "Democrat" && rep.name !== "VI" && rep.name !== "DC" && rep.name !== "PR" && rep.name !== "GU" && rep.name !== "AS") {
+				demCount += 1;
+			} else if (rep.party == "Republican" && rep.name !== "VI" && rep.name !== "DC" && rep.name !== "PR" && rep.name !== "GU" && rep.name !== "AS") {
+				repCount += 1;
 			}
-
-			response.render("welcome", {republicans: repCount, democrats: demCount, representatives: reps, states: rows[0], title: "Home"});
 		});
+		
+		response.render("welcome", {republicans: repCount, democrats: demCount, representatives: rows, states: rows[0], title: "Home"});
 	});
 });
 
