@@ -172,7 +172,7 @@ app.get("/api/states/:name/districts/:num", function(request, response) {
 });
 
 app.get("/api/states/:name/districts", function(request, response) {
-	var district_query = "SELECT * FROM congress114 WHERE type LIKE 'rep' AND state LIKE '" + request.params.name + "' ORDER BY district ASC";
+	var district_query = "SELECT * FROM districts JOIN states ON districts.state_id=states.id JOIN statistics ON statistics.district_id=districts.id WHERE states.name LIKE '" + request.params.name + "'";
 
 	connection.query(district_query, function(err, rows) {
 		response.send(rows);
