@@ -18,15 +18,16 @@ state_map.onload = function() {
 				gDistrict.style.fill = "#888888";
 			}
 			
-			gDistrict.addEventListener("mouseenter", function(e) {
-				e.currentTarget.style.old_fill = e.currentTarget.style.fill;
+			gDistrict.orig_color = gDistrict.style.fill;
+			
+			gDistrict.addEventListener("mouseover", function(e) {
 				var rgb = [];
 				e.currentTarget.style.fill.split("(")[1].split(")")[0].split(", ").forEach(function(c) {rgb.push(parseInt(c)+32)});
 				e.currentTarget.style.fill = "rgb(" + rgb.join(", ") + ")";
 			});
 			
-			gDistrict.addEventListener("mouseleave", function(e) {
-				e.currentTarget.style.fill = e.currentTarget.style.old_fill;
+			gDistrict.addEventListener("mouseout", function(e) {
+				e.currentTarget.style.fill = e.currentTarget.orig_color;
 			});
 			
 			gDistrict.addEventListener("mouseup", function(e) {
@@ -45,7 +46,7 @@ fetch(stateRequest).then(function(res) {
 }).then(function(districts) {
 	var state_data = districts[0];
 	document.getElementById("popLabel").textContent = state_data.population;
-	document.getElementById("popLabel").parentElement.addEventListener("mouseenter", function(e) {
+	document.getElementById("popLabel").parentElement.addEventListener("mouseover", function(e) {
 		var gDistricts = state_map.contentDocument.getElementsByTagName("path");
 		var districtRequest = new Request("/api/states/" + document.title.split(" |")[0] + "/districts");
 		fetch(districtRequest).then(function(res) {
@@ -59,7 +60,6 @@ fetch(stateRequest).then(function(res) {
 						//find corressponding gDistrict
 						for (var g = 0; g < gDistricts.length; g++) {
 							if ((district.name + "-" + district.number) == gDistricts[g].id) {
-								gDistricts[g].style.old_color = gDistricts[g].style.fill;
 								var color = 0;
 								if (district.population < 600000) {
 									color = 225;
@@ -74,10 +74,11 @@ fetch(stateRequest).then(function(res) {
 								} else if (district.population < 850000) {
 									color = 125;
 								} else {
-									color = 100
+									color = 100;
 								}
 								
-								gDistricts[g].style.fill = "rgb(" + color + ", " + color + ", " + color + ")";
+								console.log(parseInt(((district.population/1000)*2)-700));
+								gDistricts[g].style.fill = "rgb(" + parseInt(((district.population/1000)*2)-1400) + ", " + parseInt(((district.population/1000)*2)-1400) + ", " + parseInt(((district.population/1000)*2)-1400) + ")";
 							
 								g = gDistricts.length; //end loop
 							}
@@ -89,10 +90,33 @@ fetch(stateRequest).then(function(res) {
 	});
 	
 	document.getElementById("avgIncomeLabel").textContent = state_data.average_earnings;
+	
 	document.getElementById("workforceLabel").textContent = state_data.workforce;
+	document.getElementById("workforceLabel").parentElement.addEventListener("mouseover", function(e) {
+		var gDistricts = state_map.contentDocument.getElementsByTagName("path");
+		var districtRequest = new Request("/api/states/" + document.title.split(" |")[0] + "/districts");
+		fetch(districtRequest).then(function(res) {
+			return res.json();
+		}).then(function(district_data) {
+			var demo_divs = document.getElementsByClassName("demo_div");
+		
+			for (var i = 0; i < demo_divs.length; i++) {
+				district_data.forEach(function(district) {
+					//find corressponding gDistrict
+					for (var g = 0; g < gDistricts.length; g++) {
+						if ((district.name + "-" + district.number) == gDistricts[g].id) {
+							gDistricts[g].style.fill = "rgb(" + parseInt(((district.workforce/1000)*2)-600) + ", " + parseInt(((district.workforce/1000)*2)-600) + ", 0)";
+						
+							g = gDistricts.length; //end loop
+						}
+					}
+				});
+			}
+		});
+	});
 	
 	document.getElementById("votingAgeLabel").textContent = state_data.population - state_data.minor_population;
-	document.getElementById("votingAgeLabel").parentElement.addEventListener("mouseenter", function(e) {
+	document.getElementById("votingAgeLabel").parentElement.addEventListener("mouseover", function(e) {
 		var gDistricts = state_map.contentDocument.getElementsByTagName("path");
 		var districtRequest = new Request("/api/states/" + document.title.split(" |")[0] + "/districts");
 		fetch(districtRequest).then(function(res) {
@@ -106,7 +130,6 @@ fetch(stateRequest).then(function(res) {
 						//find corressponding gDistrict
 						for (var g = 0; g < gDistricts.length; g++) {
 							if ((district.name + "-" + district.number) == gDistricts[g].id) {
-								gDistricts[g].style.old_color = gDistricts[g].style.fill;
 								var d_pop_percent = ((710000 - district.population) / 710000);
 								if (Math.abs(d_pop_percent) <= 0.01) {
 									gDistricts[g].style.fill = "rgb(0, 215, 0)";
@@ -129,7 +152,7 @@ fetch(stateRequest).then(function(res) {
 	});
 	
 	document.getElementById("unemploymentLabel").textContent = (state_data.unemployed / state_data.workforce * 100).toFixed(1);
-	document.getElementById("unemploymentLabel").parentElement.addEventListener("mouseenter", function(e) {
+	document.getElementById("unemploymentLabel").parentElement.addEventListener("mouseover", function(e) {
 		var gDistricts = state_map.contentDocument.getElementsByTagName("path");
 		var districtRequest = new Request("/api/states/" + document.title.split(" |")[0] + "/districts");
 		fetch(districtRequest).then(function(res) {
@@ -143,7 +166,6 @@ fetch(stateRequest).then(function(res) {
 						//find corressponding gDistrict
 						for (var g = 0; g < gDistricts.length; g++) {
 							if ((district.name + "-" + district.number) == gDistricts[g].id) {
-								gDistricts[g].style.old_color = gDistricts[g].style.fill;
 								var color = parseInt((district.unemployed / district.workforce) * 2000);
 								console.log(color);
 								gDistricts[g].style.fill = "rgb(" + color + ", 0, 0)";
@@ -177,9 +199,9 @@ fetch(stateRequest).then(function(res) {
 	
 	var elements = document.getElementsByClassName("demo_div");
 	for (var e = 0; e < elements.length; e++) {
-		elements[e].addEventListener("mouseleave", function(e) {
+		elements[e].addEventListener("mouseout", function(e) {
 			for (var g = 0; g < gDistricts.length; g++) {
-				gDistricts[g].style.fill = gDistricts[g].style.old_color;
+				gDistricts[g].style.fill = gDistricts[g].orig_color;
 			}
 		});
 	}
