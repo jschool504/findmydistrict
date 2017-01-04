@@ -54,6 +54,43 @@ var reqFields = [
 ];
 
 function seedDB(connection) {
+	var data = loadCSV("congress115.csv", "\n", ",");
+	
+	data.forEach(function(entry) {
+		//console.log(entry);
+		var state = entry[0].slice(0,2);
+		var district = entry[0].slice(2,4);
+		var lastName = entry[4];
+		var firstName = entry[5];
+		var party = entry[14];
+		if (party == "D") {
+			party = "Democrat";
+		} else {
+			party = "Republican";
+		}
+	
+		var building = entry[20];
+		if (building == "CHOB") { building = "Cannon HOB" }
+		if (building == "RHOB") { building = "Rayburn HOB" }
+		if (building == "LHOB") { building = "Longworth HOB" }
+	
+		var officeNum = entry[21];
+		var officeZip4 = entry[22] + "-" + entry[23];
+		var phone = entry[24];
+	
+		var address = officeNum + " " + building + "; Washington, D.C., " + officeZip4;
+	
+		connection.query("SELECT districts.id FROM districts join states on states.id=districts.state_id WHERE states.name = '" + state + "' AND districts.number = '" + district + "'", function(err, rows) {
+			console.log(rows);
+			var query = "INSERT INTO legislators (first_name, last_name, party, phone, address, session, district_id) VALUES ('" + firstName + "', '" + lastName + "', '" + party + "', '" + phone + "', '" + address + "', 115, " + rows[0].id + ")";
+			connection.query(query, function(err, a) {
+				if (err) {
+					console.log(err);
+				}
+			});
+		});
+	});
+/*
 	var statsFields = [];
 	connection.query("describe statistics", function(err, rs) {
 		
@@ -111,7 +148,7 @@ function seedDB(connection) {
 										pacific_islander_population: parseInt(acs[19]),
 										other_population: parseInt(acs[20]) + parseInt(acs[21])
 									};
-						/*			
+									
 						var query = "INSERT INTO statistics (" + statsFields.join(",") + ",district_id) VALUES ("
 						+ data[statsFields[0]]
 						+ "," + data[statsFields[1]]
@@ -136,9 +173,10 @@ function seedDB(connection) {
 						+ "," + data[statsFields[20]]
 						+ "," + row.id
 						+ ")";
-						*/
-						var query = "UPDATE statistics SET other_earnings = " + data.other_earnings + " where statistics.district_id = " + row.id;
-						connection.query(query, function(err) {
+						
+						//var query = "UPDATE statistics SET other_earnings = " + data.other_earnings + " where statistics.district_id = " + row.id;
+						console.log(query);
+						/*connection.query(query, function(err) {
 							if (err) {
 								console.log(query);
 							}
@@ -147,7 +185,7 @@ function seedDB(connection) {
 				}
 			});
 		});
-	});
+	});*/
 	/*var electionData = loadCSV("fecelections_1.csv", "\n", "|");
 	var fdata = [];
 	

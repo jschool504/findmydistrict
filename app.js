@@ -56,7 +56,7 @@ var reqFields = [
 ];
 
 function renderDistrict(d, request, response) {
-	connection.query("select * from districts join states on districts.state_id=states.id join legislators on districts.id=legislators.district_id join statistics on districts.id=statistics.district_id WHERE states.name = '" + d[0] + "' AND districts.number = " + d[1], function(err, data) {
+	connection.query("select * from districts join states on districts.state_id=states.id join legislators on districts.id=legislators.district_id join statistics on districts.id=statistics.district_id WHERE session = 115 AND states.name = '" + d[0] + "' AND districts.number = " + d[1], function(err, data) {
 		if (err == null) {
 			console.log(data);
 			response.render("district", {
@@ -71,15 +71,15 @@ function renderDistrict(d, request, response) {
 
 app.get("/", function(request, response) {
 	
-	connection.query("SELECT states.name,legislators.party FROM states join districts on districts.state_id=states.id join legislators on legislators.district_id=districts.id", function(err, rows) {
+	connection.query("SELECT states.name,legislators.party FROM states join districts on districts.state_id=states.id join legislators on legislators.district_id=districts.id WHERE session = 115", function(err, rows) {
 		
 		var repCount = 0;
 		var demCount = 0;
 		
 		rows.forEach(function(rep, i) {
-			if (rep.party == "Democrat" && rep.name !== "VI" && rep.name !== "DC" && rep.name !== "PR" && rep.name !== "GU" && rep.name !== "AS") {
+			if (rep.party == "Democrat" && rep.name !== "VI" && rep.name !== "DC" && rep.name !== "PR" && rep.name !== "GU" && rep.name !== "AS" && rep.name !== "MP") {
 				demCount += 1;
-			} else if (rep.party == "Republican" && rep.name !== "VI" && rep.name !== "DC" && rep.name !== "PR" && rep.name !== "GU" && rep.name !== "AS") {
+			} else if (rep.party == "Republican" && rep.name !== "VI" && rep.name !== "DC" && rep.name !== "PR" && rep.name !== "GU" && rep.name !== "AS" && rep.name !== "MP") {
 				repCount += 1;
 			}
 		});
@@ -180,7 +180,7 @@ app.get("/api/states/:name/districts", function(request, response) {
 });
 
 app.get("/api/states", function(request, response) {
-	var state_query = "SELECT * FROM states JOIN districts ON districts.state_id=states.id JOIN legislators ON legislators.district_id=districts.id JOIN statistics ON statistics.state_id=states.id";
+	var state_query = "SELECT * FROM states JOIN districts ON districts.state_id=states.id JOIN legislators ON legislators.district_id=districts.id JOIN statistics ON statistics.state_id=states.id WHERE session = 115";
 
 	connection.query(state_query, function(err, rows) {
 		
@@ -217,7 +217,7 @@ app.get("/api/states", function(request, response) {
 
 app.get("/api/states/:name", function(request, response) {
 	
-	var state_query = "SELECT * FROM states JOIN districts ON states.id=districts.state_id JOIN legislators ON districts.id=legislators.district_id JOIN statistics ON states.id=statistics.state_id WHERE states.name = '" + request.params.name.toUpperCase() + "' ORDER BY districts.number ASC";
+	var state_query = "SELECT * FROM states JOIN districts ON states.id=districts.state_id JOIN legislators ON districts.id=legislators.district_id JOIN statistics ON states.id=statistics.state_id WHERE session = 115 AND states.name = '" + request.params.name.toUpperCase() + "' ORDER BY districts.number ASC";
 	
 	connection.query(state_query, function(err, rows) {
 		response.send(rows);
