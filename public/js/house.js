@@ -58,7 +58,7 @@ Chart.defaults.global.legend.display = false;
 
 var repCtx = document.getElementById("repCanvas");
 
-var repData = [247, 188];
+var repData = [249, 186];
 
 var rcds = [{data: repData, backgroundColor: ["#e00", "#00e"], hoverBackgroundColor: ["#f00", "#00f"], borderColor: "#fff", borderWidth: 2}];
 var rcdt = {labels: ["Republicans", "Democrats"], datasets: rcds};
